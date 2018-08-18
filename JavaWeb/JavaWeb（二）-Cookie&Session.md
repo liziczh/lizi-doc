@@ -159,9 +159,9 @@ URL重写实例：
 
 绝对路径写法：
 
-```jsp
-<a herf= request.getContextPath() + "/hello_2.jsp" >hello_2.jsp</a>
-```
+客户端（浏览器，JSP）：`${pageContext.request.contextPath}` 相当于 `/应用名` 。
+
+服务器端（Servlet）：`/` 相当于 当前应用下。
 
 
 
