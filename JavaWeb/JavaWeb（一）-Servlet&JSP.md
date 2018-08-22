@@ -127,7 +127,7 @@ keytool -genkeypair -alias "tomcat" -keyalg "RSA" -keystore "g:\tomcat.keystore"
 配置server.xml：
 
 ```xml
-<Connector port="443" protocol="org.apache.coyote.http11.Http11Protocol" SSLEnabled="true"  
+<Connector port="443" protocol="org.apache.coyote.http11.Http11Protocol" SSLEnabled="true" 
 		maxThreads="150" scheme="https" secure="true"  
 		clientAuth="false" sslProtocol="TLS"
 		keystoreFile="d:\tomcat.keystore"
@@ -430,6 +430,20 @@ request.getRequestDispatcher("/servletDemo2").include(request,response);
 请求包含多用于JSP页面，完成多页面的合并。
 
 请求转发多用于Servlet中，转发目标大多是JSP页面。
+
+
+
+**Servlet 中 forward() 与 redirect() 的区别？**
+
+- 浏览器显示：重定向会改变URL地址，请求转发不会改变URL地址。
+
+- 资源共享：重定向不可以进行资源共享，请求转发可以资源共享。
+
+- 功能：重定向可以用URL绝对路径访问其他Web服务器的资源，而请求转发只能在一个Web应用程序内进行资源转发，即服务器内部的一种操作。
+
+- 效率：重定向效率低，相当于再一次请求；请求转发效率相对较高，跳转仅发生在服务器端。
+
+
 
 ### 中文乱码问题
 

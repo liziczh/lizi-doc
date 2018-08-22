@@ -156,10 +156,10 @@ log4j.appender.E.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%r ] 
 
 Mapper 动态代理规范：
 
-- Mapper.xml文件中的namespace与Mapper接口的类路径相同。 
-- Mapper接口方法名和Mapper.xml中定义的每个statement的id相同。
-- Mapper接口方法的输入参数类型和mapper.xml中定义的每个sql 的parameterType的类型相同。
--  Mapper接口方法的输出参数类型和mapper.xml中定义的每个sql的resultType的类型相同。
+- Mapper.xml文件中的**namespace**与**Mapper接口的类路径**相同。 
+- Mapper**接口方法名**和Mapper.xml中定义的每个**statement**的**id**相同。
+- Mapper接口方法的**输入参数类型**和mapper.xml中定义的每个sql 的**parameterType**的类型相同。
+-  Mapper接口方法的**输出参数类型**和mapper.xml中定义的每个sql的**resultType**的类型相同。
 
 
 

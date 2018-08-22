@@ -22,27 +22,32 @@ Maven **pom.xml**：
 
 ```xml
 <dependencies>
-    <!--引入spring依赖-->
-    <!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
+    <!--Spring框架-->
     <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-context</artifactId>
         <version>4.3.18.RELEASE</version>
     </dependency>
-    <!--引入日志相关-->
-    <!-- https://mvnrepository.com/artifact/commons-logging/commons-logging -->
+    <!--引入Spring日志规范-->
     <dependency>
         <groupId>commons-logging</groupId>
         <artifactId>commons-logging</artifactId>
         <version>1.2</version>
     </dependency>
+    <!--引入日志实现log4j-->
     <dependency>
         <groupId>log4j</groupId>
         <artifactId>log4j</artifactId>
         <version>1.2.17</version>
     </dependency>
+    <!--引入spring的测试-->
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-test</artifactId>
+        <version>4.3.18.RELEASE</version>
+        <scope>test</scope>
+    </dependency>
     <!--引入单元测试-->
-    <!-- https://mvnrepository.com/artifact/junit/junit -->
     <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
@@ -296,13 +301,9 @@ xmlns:c="http://www.springframework.org/schema/c"
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
-```
-
-（2）引入组件自动扫描
-
-```xml
-<!--组件自动扫描-->
-<context:component-scan base-package="com.lizi.pojo"></context:component-scan>
+    <!--启用组件自动扫描-->
+    <context:component-scan base-package="com.lizi.pojo"></context:component-scan>
+</beans>
 ```
 
 #### Bean 的定义：@Component
@@ -319,19 +320,19 @@ xmlns:c="http://www.springframework.org/schema/c"
 
 `@Scope` - 指定 Bean 作用域；默认 `singleton`；
 
-```
+```java
 @Scope("prototype")
 ```
 
 #### 按类型自动装配：@Autowired
 
-```
+```java
 @Autowired
 ```
 
 #### 按名称自动装配：@Autowired和@Qualifier
 
-```
+```java
 @Autowired
 @Qualifier("myStudent")
 ```
@@ -341,16 +342,28 @@ xmlns:c="http://www.springframework.org/schema/c"
 
 `@Value` - 基本类型属性注入；可用于属性&setter()方法上。
 
-```xml
+```java
 @Value("1")
 ```
 
-#### 测试注解
+### Spring 测试依赖
 
+```xml
+<!--引入spring测试依赖-->
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-test</artifactId>
+    <version>4.3.18.RELEASE</version>
+    <scope>test</scope>
+</dependency>
 ```
+
+```java
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring-annotation-cfg.xml"})
 ```
+
+`@Autowired` 自动装配一个对象，测试调用即可。
 
 ## Spring 与 AOP
 
@@ -360,19 +373,19 @@ AOP 底层是使用动态代理模式，将交叉业务逻辑织入到主业务�
 
 ### AOP 术语
 
-（1）切面（Aspect）：泛指交叉业务逻辑。比如事务处理、日志处理等。常用的切面有通知与顾问，用于增强主业务逻辑。
+（1）**切面（Aspect）**：泛指**交叉业务逻辑**。比如事务处理、日志处理等。常用的切面有通知与顾问，用于增强主业务逻辑。
 
-（2）织入（Weaving）：指将交叉业务逻辑插入主业务逻辑的过程。
+（2）**织入（Weaving）**：指将交叉业务逻辑插入主业务逻辑的过程。
 
-（3）连接点（JoinPoint）：指被切面织入的方法，通常业务接口中的方法均为连接点。
+（3）**连接点（JoinPoint）**：指被切面织入的方法，通常业务接口中的方法均为连接点。
 
-（4）切入点（Pointcut）：指切面具体织入的方法。
+（4）**切入点（Pointcut）**：指切面具体织入的方法。
 
-（5）目标对象（Target）：指将要被增强的对象。
+（5）**目标对象（Target）**：指将要被增强的对象。
 
-（6）通知（Advice）：通知是切面的一种实现，完成简单织入功能。通知定义了增强代码切入到目标代码的时间点，是目标方法执行之前执行，还是之后执行等。通知类型不同，切入时间不同。 切入点定义切入的位置，通知定义切入的时间。 
+（6）**通知（Advice）**：通知是切面的一种实现，完成简单织入功能。通知定义了增强代码切入到目标代码的时间点，是目标方法执行之前执行，还是之后执行等。通知类型不同，切入时间不同。 切入点定义切入的位置，通知定义切入的时间。 
 
-（7）顾问（Advisor）：顾问是切面的另一种实现，能够将通知以更为复杂的方式织入到目标对象中，是将通知包装为更复杂切面的装配器。 
+（7）**顾问（Advisor）**：顾问是切面的另一种实现，能够将通知以更为复杂的方式织入到目标对象中，是将通知包装为更复杂切面的装配器。 
 
 ### Spring AOP 规则
 
@@ -390,48 +403,17 @@ AOP编程：
 
 3、定义增强处理，增强处理就是在AOP框架为普通业务组件织入的处理动作
 
-### 引入依赖
+### 相关依赖与配置
 
 Maven **pom.xml**：
 
 ```xml
-    <dependencies>
-        <!--引入spring依赖-->
-        <!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>4.3.18.RELEASE</version>
-        </dependency>
-        <!--引入日志相关-->
-        <!-- https://mvnrepository.com/artifact/commons-logging/commons-logging -->
-        <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
-        </dependency>
-        <!--引入单元测试-->
-        <!-- https://mvnrepository.com/artifact/junit/junit -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!--spring 切面编程-->
-        <!-- https://mvnrepository.com/artifact/org.springframework/spring-aspects -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aspects</artifactId>
-            <version>4.3.18.RELEASE</version>
-        </dependency>
-    </dependencies>
+<!--spring 切面编程-->
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-aspects</artifactId>
+    <version>4.3.18.RELEASE</version>
+</dependency>
 ```
 
 **spring-*-cfg.xml**：
@@ -447,13 +429,17 @@ Maven **pom.xml**：
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 ```
 
-### AspectJ 五种通知类型
+### 基于 XML 的 AOP 实现
+
+Spring 使用 AspectJ 实现 AOP。
+
+#### AspectJ 五种通知类型
 
 AspectJ中常用的通知有五种类型：
 
 `@Before`：前置通知, 在方法执行之前执行
 
-`@After`： ：后置通知（最终通知）, 在方法执行之后执行
+`@After`： 后置通知（最终通知）, 在方法执行之后执行
 
 `@After-Running`：返回通知, 在方法返回结果之后执行
 
@@ -461,9 +447,9 @@ AspectJ中常用的通知有五种类型：
 
 `@Around`：环绕通知, 围绕着方法执行
 
-### AspectJ 切入点表达式
+#### AspectJ 切入点表达式
 
-```xml
+```java
 execution (
 [modifiers-pattern] 访问权限类型 
 ret-type-pattern 返回值类型 
@@ -472,6 +458,123 @@ name-pattern(param-pattern) 方法名(参数名)
 throws-pattern] 抛出异常类型 
 ) 
 ```
+
+#### AOP 配置
+
+```xml
+<!--配置AOP-->
+<aop:config>
+    <!--定义切入点-->
+    <aop:pointcut id="doSome" expression="execution(*  *..IStudentService.doSome(..))"></aop:pointcut>
+    <aop:pointcut id="doOther" expression="execution(*  *..IStudentService.doOther(..))"></aop:pointcut>
+     <!--定义切面-->
+     <aop:aspect ref="myAspect">
+         <!--前置通知-->
+         <aop:before method="recodeLog" pointcut-ref="doSome"></aop:before>
+         <!--后置通知-->
+         <aop:after method="doTx" pointcut-ref="doSome"></aop:after>
+         <!--返回通知-->
+         <aop:after-returning method="returnDo" pointcut-ref="doSome" returning="result"></aop:after-returning>
+         <!--异常通知-->
+         <aop:after-throwing method="exceptionDo" pointcut-ref="doSome"  throwing="ex"></aop:after-throwing>
+         <!--环绕通知-->
+         <aop:around method="roundDo" pointcut-ref="doSome"></aop:around>
+    </aop:aspect>
+</aop:config>
+```
+
+### 基于注解的 AOP 实现
+
+**spring-*-cfg.xml**：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xmlns:aop="http://www.springframework.org/schema/aop"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--启用组件自动扫描-->
+    <context:component-scan base-package="com.lizi.service"></context:component-scan>
+    <!--启用切面自动代理-->
+    <aop:aspectj-autoproxy />
+</beans>
+```
+
+```
+@Aspect：定义切面
+```
+
+```java
+@Before("execution(*  *..IStudentService.doSome(..))")
+```
+
+```java
+@After("execution(*  *..IStudentService.doSome(..))")
+```
+
+```java
+@AfterReturning(value = "execution(* *..IStudentService.doSome(..))",returning = "result")
+```
+
+```java
+@Around("execution(* *..IStudentService.doSome(..))")
+```
+
+```java
+@AfterThrowing(value = "execution(* *..IStudentService.doSome(..))" ,throwing = "ex")
+```
+
+
+
+## Spring 与 DAO
+
+### Spring JDBC 模板
+
+Spring JdbcTemplate 模板
+
+#### 相关依赖
+
+```xml
+<!--Spring JDBC-->
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-jdbc</artifactId>
+    <version>4.3.18.RELEASE</version>
+</dependency>
+```
+
+
+
+
+
+### Spring 事务管理
+
+#### 相关依赖
+
+```xml
+<!--Spring Tx-->
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-tx</artifactId>
+    <version>4.3.18.RELEASE</version>
+</dependency>
+```
+
+
+
+## Spring 与 MyBatis 
+
+MyBatis：
+
+
+
 
 
 
