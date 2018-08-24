@@ -134,6 +134,18 @@ keytool -genkeypair -alias "tomcat" -keyalg "RSA" -keystore "g:\tomcat.keystore"
 		keystorePass="123456" />
 ```
 
+## web.xml 加载过程
+
+1.启动 web 项目，创建一个 ServletContext（Servlet 上下文），即应用域。
+
+2.Web 容器（Tomcat）读取 web.xml 中的 `<context-param>` 键值对到 ServletContext。
+
+3.Web 容器读取 web.xml 中的 `<listener>` 创建监听器。
+
+4.Web 容器读取 web.xml 中的 `<filter>` 创建过滤器。
+
+5.Web 容器读取 web.xml 中的 `<servlet>` 创建 Servlet。
+
 ## Servlet
 
 Servlet用于处理请求，属于动态资源。
