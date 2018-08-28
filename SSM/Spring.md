@@ -571,7 +571,74 @@ Spring JdbcTemplate 模板
 
 ## Spring 与 MyBatis 
 
-MyBatis：
+基本思路：在spring中注册SqlSessionFactory
+
+相关依赖：mybatis-spring
+
+```xml
+<dependency>
+  <groupId>org.mybatis</groupId>
+  <artifactId>mybatis-spring</artifactId>
+  <version>x.x.x</version>
+</dependency>
+```
+
+**mybatis-config.xml**：
+
+```xml
+<!--别名：使用简单类名-->
+<typeAliases>
+    <package name="com.group3.bookstore.mapper"></package>
+</typeAliases>
+<!--映射文件：Mapper动态代理，映射接口-->
+<mappers>
+     <package name="com.group3.bookstore.mapper"></package>
+</mappers>
+```
+
+**spring-config.xml**：
+
+配置数据源：
+
+```
+<context:property-placeholder location="classpath:jdbc.properties"/>
+<bean id="datasource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <property name="driverClassName" value="${driver}"/>
+    <property name="url" value="${url}"/>
+    <property name="username" value="${username}"/>
+    <property name="password" value="${password}"/>
+ </bean>
+```
+
+定义 SqlSessionFactory 类：
+
+```xml
+<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+    <!--注入数据源-->
+    <property name="dataSource" ref="datasource"/>
+    <!--注入mybatis-config.xml-->
+    <property name="configLocation" value="classpath:mybatis-config.xml"/>
+</bean>
+```
+
+Mapper动态代理：
+
+```xml
+<bean id="mapperFactoryBean"  class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+    <!--注入SqlSessionFactory-->
+    <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    <!--Mapper动态扫描-->
+    <property name="basePackage" value="com.group3.bookstore.mapper"/>
+</bean>
+```
+
+
+
+
+
+
+
+
 
 
 

@@ -343,10 +343,24 @@ public ModelAndView handleRequest(HttpServletRequest request, HttpServletRespons
 
 ### ModelAndView
 
-ModelAndView 指数据与视图的封装对象，负责设置页面跳转地址，封装数据，传递给视图。
+**ModelAndView**：
+
+ModelAndView 指数据与视图的封装对象，负责设置页面跳转地址，封装数据到 request ，传递给视图。
 
 ```java
 ModelAndView  modelAndView  = new ModelAndView(String viewName, String modelName, Objecct modelObject);
+```
+
+**Model**：接口
+
+```java
+model.addAttribute("attrName", attr)
+```
+
+**ModelMap**：实现类
+
+```
+modelMap.addAttribute("attrName", attr)
 ```
 
 ### ViewResolver 视图解析器
@@ -452,29 +466,356 @@ ResourceBundleViewResolver：使用 properties 文件注册视图。
 
 > 请求参数必须携带 name，且 name 必须等于 Tom；必须携带 age，且 age不能等于16。
 
-### 处理器方法的返回值类型
+### Controller 方法返回值类型
 
-**返回 ModelAndView**：
+**返回 ModelAndView**：请求转发
 
-- 视图：viewName
-- 数据：model+modelObject
+- 视图：`modelAndView.setViewName(String viewName)`；
+- 数据：`modelAndView.addObject(String modelName, Object modelObject)`；
 
-**返回 String**：
+**返回 String**：请求转发
 
-- 视图：`return String`；
+- 视图：`return viewName`；
 - 数据：`request.setAttribute()`；
 
-**void**：主要应用在 AJAX 中
+**返回 void**：AJAX
+
+请求转发：
+
+- 视图：`request.getRequestDispatcher(String viewURL).forward(request,response)`；
+- 数据：`request.setAttribute()`；
+
+AJAX：
 
 - 数据：`response.getWriter().write( json )`；
 
+**返回 Object**：AJAX
+
+- 数据：`return Object`；
+
+**@ResponseBody**：将 Controller 返回的对象，通过适当的 HttpMessageConverter 转换后，写入到响应体中。
+
+### Controller 请求转发&重定向
+
+**返回 ModelAndView**：
+
+- 请求转发：`modelAndView.setViewName("forward:/WEB-INF/pages/xxx.jsp")`；
+- 重定向：`modelAndView.setViewName("redirect:www.baidu.com")`；
+
+**返回 String**：
+
+- 请求转发：`return "forward:/WEB-INF/pages/xxx.jsp"`；
+- 重定向：`return "redirect:www.baidu.com"`；
+
+
+
+### Controller 方法参数获取
+
+- 获取单个参数
+
+- 获取参数整体对象
+
+#### @RequestParam
+
+**@RequestParam** 注解参数：获取请求参数，传入方法形参中。相当于 `requset.getParameter()` 获取URL参数和表单数据。
+
+示例代码：获取请求参数 id ，传入方法形参中。
+
+```java
+@RequestMapping("/getStudentById.do")
+public ModelAndView getStudentById(@RequestParam(value = "id",required = true) int id){
+    Student student = service.getStudentById(id);
+    ModelAndView modelAndView = new ModelAndView("student","stu",student);
+    return modelAndView;
+}
+```
+
+- `value ` 属性 - 参数名。
+- `required` 属性 - 是否必须传入，布尔值。
+
+#### @PathVariable
+
+**@PathVariable** 注解参数：获取路径变量，传入方法形参中。获取URL模板  `/page/{id}` 中的 `{id}` 值。
+
+示例代码：获取URL路径中 {stuId} 处的值。
+
+```java
+@RequestMapping("/student/{stuId}")  
+public void getStudent(@PathVariable String stuId, Model model) {
+	// do Some...
+} 
+```
+
+#### @SessionAttributes
+
+**@SessionAttributes** 注解 Controller：指定 Model 中的属性同步到 session 域中。
+
+示例代码：将 Model 中的 attr1 和 attr2 放入 session 域中。
+
+```java
+@Controller
+@RequestMapping("/demo")
+@SessionAttributes(value={"attr1","attr2"})
+public class Demo {
+    
+    @RequestMapping("index.do")
+    public ModelAndView index() {
+        ModelAndView mav = new ModelAndView("/index.jsp");
+        mav.addObject("attr1", "attr1Value");
+        mav.addObject("attr2", "attr2Value");
+        return mav;
+    }
+    
+    @RequestMapping("/index2.do")
+    public ModelAndView index2(@ModelAttribute("attr1")String attr1, @ModelAttribute("attr2")String attr2) {
+        ModelAndView mav = new ModelAndView("success.jsp");
+        return mav;
+    }
+}
+```
+
+#### **@ModelAttribute**
+
+**@ModelAttribute(“attributeName”)** 注解方法：该方法在处理器方法之前执行，方法返回值放入模型属性 / session 中。
+
+**@ModelAttribute(“attributeName”)** 注解参数：将模型属性放入注解的参数中。
+
+Model
+
+ModelMap
+
+`<mvc:annotation-driven>` 会自动注册 RequestMappingHandlerMapping 与 RequestMappingHandlerAdapter 两个 Bean。
+
+### 中文乱码问题
+
+**web.xml**：
+
+```xml
+<!--解决中文乱码-->
+<filter>
+    <filter-name>characterEncodingFilter</filter-name>
+    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <init-param>
+        <param-name>encoding</param-name>
+        <param-value>UTF-8</param-value>
+    </init-param>
+    <init-param>
+        <param-name>forceEncoding</param-name>
+        <param-value>true</param-value>
+    </init-param>
+</filter>
+<filter-mapping>
+    <filter-name>characterEncodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+```
+
+## Spring 高级
+
+### 类型转换器
+
+（1）自定义转换器：实现 Converter 接口，重写 convert() 方法。
+
+```java
+public class DateConverter implements Converter<String,Date> {
+    @Override
+    public Date convert(String dateStr) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = null;
+        try {
+            date = simpleDateFormat.parse(dateStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
+}
+```
+
+（2）注册自定义转换器：spring-config.xml
+
+```xml
+<!--注册类型转换器-->
+<bean id="dateConverter" class="com.lizi.crud.converter.DateConverter"/>
+<!--注册类型转换服务-->
+<bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+    <property name="converters" ref="dateConverter"></property>
+</bean>
+<!--注册MVC注解驱动-->
+<mvc:annotation-driven conversion-service="conversionService"/>
+```
+
+### 异常处理器
+
+前提：自定义异常类：继承 Exception。
+
+```java
+public class UserException  extends  Exception{
+    public UserException(){
+        super();
+    }
+    public UserException(String msg){
+        super(msg);
+    }
+}
+
+```
+
+#### SimpleMappingExceptionResolver
+
+直接注册异常处理器：spring-config.xml
+
+```xml
+<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+    <property name="exceptionMappings">
+        <props>
+            <prop key="com.lizi.crud.exception.UserException">UserException</prop>
+        </props>
+    </property>
+    <!--默认错误页面-->
+    <property name="defaultErrorView" value="/defaultError.jsp"></property>
+    <!--错误信息-->
+    <property name="exceptionAttribute" value="ex"></property>
+</bean>
+```
+
+#### 自定义异常处理器
+
+（1）自定义异常处理器：实现 HandlerExceptionResolver 接口，重写 resolveException() 方法。
+
+```java
+public class MyExceptionHandler implements HandlerExceptionResolver {
+    @Override
+    public ModelAndView resolveException(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("e",e);
+        if(e instanceof UserException){
+            modelAndView.setViewName("UserException");
+        }
+        return modelAndView;
+    }
+}
+```
+
+（2）注册异常处理器：spring-config.xml
+
+```xml
+<bean class="com.lizi.crud.exception.MyExceptionHandler"></bean>
+```
+
+#### 注解处理异常
+
+定义 ExceptionHandlerController
+
+```java
+@Controller
+public class ExceptionHandlerController {
+    @ExceptionHandler(value = UserException.class)
+    public ModelAndView handlerException(HttpServletRequest request, HttpServletResponse response, Exception e){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("defalutError");
+        modelAndView.addObject("e",e);
+        if(e instanceof UserException){
+            modelAndView.setViewName("UserException");
+        }
+        return modelAndView;
+    }
+}
+```
+
+继承 ExceptionHandlerController
+
+```java
+public class UserController extends ExceptionHandlerController{}
+```
+
+### Validator 校验器
+
+引入依赖：
+
+```xml
+<dependency>
+    <groupId>org.hibernate.validator</groupId>
+    <artifactId>hibernate-validator</artifactId>
+    <version>6.0.7.Final</version>
+</dependency>
+```
+
+注册 Validator 校验器
+
+```xml
+<bean id="myValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+    <property name="providerClass" value="org.hibernate.validator.HibernateValidator"></property>
+</bean>
+<mvc:annotation-driven validator="myValidator" />
+```
+
+**Bean Validation 中内置的 constraint**：
+
+| Constraint                    | 详细信息                                                 |
+| ----------------------------- | -------------------------------------------------------- |
+| `@Null`                       | 被注释的元素必须为 `null`                                |
+| `@NotNull`                    | 被注释的元素必须不为 `null`                              |
+| `@AssertTrue`                 | 被注释的元素必须为 `true`                                |
+| `@AssertFalse`                | 被注释的元素必须为 `false`                               |
+| `@Min(value)`                 | 被注释的元素必须是一个数字，其值必须大于等于指定的最小值 |
+| `@Max(value)`                 | 被注释的元素必须是一个数字，其值必须小于等于指定的最大值 |
+| `@DecimalMin(value)`          | 被注释的元素必须是一个数字，其值必须大于等于指定的最小值 |
+| `@DecimalMax(value)`          | 被注释的元素必须是一个数字，其值必须小于等于指定的最大值 |
+| `@Size(max, min)`             | 被注释的元素的大小必须在指定的范围内                     |
+| `@Digits (integer, fraction)` | 被注释的元素必须是一个数字，其值必须在可接受的范围内     |
+| `@Past`                       | 被注释的元素必须是一个过去的日期                         |
+| `@Future`                     | 被注释的元素必须是一个将来的日期                         |
+| `@Pattern(value)`             | 被注释的元素必须符合指定的正则表达式                     |
+
+**Hibernate Validator 附加的 constraint**：
+
+| Constraint  | 详细信息                               |
+| ----------- | -------------------------------------- |
+| `@Email`    | 被注释的元素必须是电子邮箱地址         |
+| `@Length`   | 被注释的字符串的大小必须在指定的范围内 |
+| `@NotEmpty` | 被注释的字符串的必须非空               |
+| `@Range`    | 被注释的元素必须在合适的范围内         |
+
+@Validated 注解参数进行校验。
+
+BindingResult 用于获取所有异常信息。
+
+```java
+FiledError xxError = br.getFiledError("XXError")
+```
+
+```el
+${xxError.defaultMessage}
+```
+
+
+
+文件上传
+
+
+
+拦截器
 
 
 
 
 
+### RESTful
 
+状态转换：
 
+- GET：获取资源
+- POST：新增资源
+- PUT：更新资源
+- DELETE：删除资源
 
+示例：
 
+–/order/1 HTTP GET ：得到 id = 1 的 order
 
+–/order/1 HTTP DELETE：删除 id = 1的 order
+
+–/order/1 HTTP PUT：更新id = 1的 order
+
+–/order HTTP POST：新增 order
