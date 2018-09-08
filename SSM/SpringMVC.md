@@ -744,9 +744,11 @@ public class UserController extends ExceptionHandlerController{}
 注册 Validator 校验器
 
 ```xml
+<!--注册Validator-->
 <bean id="myValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
     <property name="providerClass" value="org.hibernate.validator.HibernateValidator"></property>
 </bean>
+<!--注册Validator驱动-->
 <mvc:annotation-driven validator="myValidator" />
 ```
 
@@ -802,6 +804,8 @@ ${xxError.defaultMessage}
 
 
 ### RESTful
+
+REST：URL中不允许出现动词，有请求类型决定执行增删改查的具体操作。
 
 状态转换：
 

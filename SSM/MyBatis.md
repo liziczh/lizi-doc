@@ -10,22 +10,69 @@ ORM（Object Relational Mapping，对象关系映射），一个持久化类对�
 
 1 引入依赖
 
-```
-
+```xml
+<dependency>
+    <groupId>org.mybatis</groupId>
+    <artifactId>mybatis</artifactId>
+    <version>3.4.4</version>
+</dependency>
+<dependency>
+     <groupId>mysql</groupId>
+     <artifactId>mysql-connector-java</artifactId>
+     <version>5.1.38</version>
+</dependency>
 ```
 
 ## MyBatis 配置文件
 
 MyBatis 映射配置文件：`mybatis-config.xml` ；
 
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+        <!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--jdbc.properties-->
+    <properties resource="jdbc.properties"/>
+    <settings>
+        <setting name="logImpl" value="LOG4J"/>
+    </settings>
+    <!--设置别名-->
+    <typeAliases>
+        <!--使用pakcage指定别名，包下所有类都可用简单类名作为别名-->
+        <package name="com.lizi.pojo"></package>
+    </typeAliases>
+    <!--项目环境-->
+    <environments default="development">
+        <!--环境一：development-->
+        <environment id="development">
+            <!--事务管理器-->
+            <transactionManager type="JDBC"/>
+            <!--数据源-->
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <!--映射文件-->
+    <mappers>
+        <package name="com/lizi/dao"></package>
+    </mappers>
+</configuration>
+```
+
 ### properties
 
-**properties** 属性文件：外部配置，可动态改变。
+**properties** 属性文件：外部配置，动态引入。
 
 1.引入 resources 文件夹下的 *.properties 文件 ：
 
 ```xml
-<properties resource="com/lizi/test/config.properties" />
+<properties resource="jdbc.properties" />
 ```
 
 2.`${xxx}` 动态引用 `*.properties` 文件中 xxx 的属性值：
@@ -37,6 +84,56 @@ MyBatis 映射配置文件：`mybatis-config.xml` ；
   <property name="username" value="${username}"/>
   <property name="password" value="${password}"/>
 </dataSource>
+```
+
+### settings
+
+```xml
+<settings>
+    <setting name="logImpl" value="LOG4J"/>
+</settings>
+```
+
+### typeAliases
+
+为 JavaBean 配置别名：
+
+```xml
+<typeAliases>
+    <typeAlias type="com.lizi.pojo.User" alias="user"/>
+</typeAliases>
+```
+
+为 package 配置别名：package 下所有类均可使用简单类名作为其别名。
+
+```xml
+<typeAliases>
+    <!--使用pakcage指定别名，包下所有类都可用简单类名作为别名-->
+    <package name="com.lizi.pojo"></package>
+</typeAliases>
+```
+
+### environments
+
+```xml
+<environments default="development">
+    <!--环境一：development-->
+    <environment id="development">
+        <!--配置事务管理器-->
+        <transactionManager type="JDBC"/>
+        <!--配置数据源-->
+        <dataSource type="POOLED">
+            <property name="driver" value="${driver}"/>
+            <property name="url" value="${url}"/>
+            <property name="username" value="${username}"/>
+            <property name="password" value="${password}"/>
+         </dataSource>
+    </environment>
+    <!--环境二：development2-->
+    <environment id="development2">
+        ......
+    </environment>
+</environments>
 ```
 
 ### mappers
@@ -82,6 +179,45 @@ mappers 映射文件
 
 ## MyBatis SQL 映射文件
 
+```
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lizi.dao.UserMapper">
+    <!--SQL查询语句-->
+    <select id="getUserById" parameterType="int" resultType="User">
+        select * from user where uid = #{id}
+    </select>
+    <!--SQL查询语句-->
+    <select id="getAllUser" resultType="User">
+        select * from user
+    </select>
+    <!--SQL插入语句-->
+    <insert id="addUser" parameterType="User">
+        insert  into user values(#{id},#{username},#{password})
+    </insert>
+    <!--SQL更新语句-->
+    <update id="updateUserByUid" parameterType="User">
+        update user set username = #{username}, password = #{password} where uid = #{id}
+    </update>
+    <!--SQL删除语句-->
+    <delete id="deleteUserByUid" parameterType="int">
+        delete from user where uid = #{id}
+    </delete>
+
+    <!--SQL查询 返回Map-->
+    <select id="getAllUserMap" resultType="User">
+        select * from user
+    </select>
+
+</mapper>
+```
+
+**namespace**：命名空间，一般为包名+ SQL 映射文件名。
+
+
+
 
 
 `#{}`：代表占位符 `?` ；防止SQL注入。
@@ -103,7 +239,7 @@ mappers 映射文件
 
 #### 日志级别
 
- 为了方便对于日制信息的输出显示，对日志内容进行了分级管理。共分为6个级别：fatal(致命的)、error、warn、info、debug、trace(堆栈) 。
+为了方便对于日制信息的输出显示，对日志内容进行了分级管理。共分为6个级别：fatal(致命的)、error、warn、info、debug、trace(堆栈) 。
 
 Log4j 建议只使用四个级别：ERROR、WARN、INFO、DEBUG。
 
@@ -148,7 +284,25 @@ log4j.appender.E.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%r ] 
 
 创建日志对象 Logger，通过Logger的方法在代码中加入日志输出语句。在Java代码中输出日志，需要用到 Logger 类的静态方法 `getLogger()`；
 
-## MyBatis API
+## MyBatis 使用流程
+
+```java
+// 1.加载配置文件：流加载
+InputStream in = Resources.getResourceAsStream("mybatis-config.xml");
+// 2.创建SqlSession对象：SqlSessionFactory.openSession();
+SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(in);
+SqlSession sqlSession = sqlSessionFactory.openSession();
+// 3.sqlSession执行SQL语句
+sqlSession.select();
+sqlSession.insert();
+sqlSession.update();
+sqlSession.delete();
+sqlSession.commit();
+// 4.关闭sqlSession
+if(sqlSession!=null){
+    sqlSession.close();
+}
+```
 
 
 
@@ -181,3 +335,16 @@ Mapper 动态代理规范：
 
 动态SQL
 
+## 一对多
+
+
+
+
+
+## 多对一
+
+
+
+
+
+## 多对多
