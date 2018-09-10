@@ -2,6 +2,12 @@
 
 ## Java
 
+#### Java Object 重写 equals() 方法的同时为什么要重写 hashCode()？
+
+因为 equals() 与 hashCode() 必须保持一致；
+- 当 obj1.equals(obj2) 为 true，obj1.hashCode() 必须等于 obj2.hashCode()；
+- 当obj1.hashCode() == obj2.hashCode()为false时，obj1.equals(obj2)必须为false；
+
 ### 集合
 
 #### HashTable与HashMap的区别
