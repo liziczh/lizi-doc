@@ -229,6 +229,10 @@ public void quickSort(int[] arr) {
 
 ## JavaWeb
 
+#### 请求转发&重定向的区别？
+
+
+
 
 
 
@@ -237,7 +241,7 @@ public void quickSort(int[] arr) {
 
 ### MyBatis
 
-
+ORM 映射
 
 ### Spring
 
