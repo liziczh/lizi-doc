@@ -68,6 +68,13 @@ HashSet - 基于 HashMap （哈希表）实现，元素为 HashMap 的 key；
 - 线程不同步（线程不安全）；
 - 通过 equals() 和 hashCode() 方法判断重复元素。
 
+**Java Object 重写 equals() 方法的同时为什么要重写 hashCode()？** 
+
+因为 equals() 与 hashCode() 必须保持一致；
+
+- 当 obj1.equals(obj2) 为 true，obj1.hashCode() 必须等于 obj2.hashCode()；
+- 当obj1.hashCode() == obj2.hashCode()为false时，obj1.equals(obj2)必须为false；
+
 #### TreeSet
 
 TreeSet- 基于 TreeMap （二叉树）实现，元素为 TreeMap 的 key；主要用来**元素排序**。

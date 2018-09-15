@@ -1,13 +1,5 @@
 # Java Interview Question
 
-# Java
-
-### Java Object 重写 equals() 方法的同时为什么要重写 hashCode()？
-
-因为 equals() 与 hashCode() 必须保持一致；
-- 当 obj1.equals(obj2) 为 true，obj1.hashCode() 必须等于 obj2.hashCode()；
-- 当obj1.hashCode() == obj2.hashCode()为false时，obj1.equals(obj2)必须为false；
-
 # 集合
 
 集合的产生：为保存数目不确定的对象，解决数组长度固定的问题；
@@ -77,6 +69,13 @@ HashSet - 基于 HashMap （哈希表）实现，元素为 HashMap 的 key；
 - 允许一个 null 值（无序不重复）；
 - 线程不同步（线程不安全）；
 - 通过 equals() 和 hashCode() 方法判断重复元素。
+
+**Java Object 重写 equals() 方法的同时为什么要重写 hashCode()？** 
+
+因为 equals() 与 hashCode() 必须保持一致；
+
+- 当 obj1.equals(obj2) 为 true，obj1.hashCode() 必须等于 obj2.hashCode()；
+- 当obj1.hashCode() == obj2.hashCode()为false时，obj1.equals(obj2)必须为false；
 
 #### TreeSet
 
@@ -172,6 +171,8 @@ HashMap - 基于哈希桶数组实现的 Map；
 TreeMap - 基于红黑树实现的 Map；
 
 
+
+## Collections 工具类
 
 # IO&NIO
 
@@ -423,260 +424,79 @@ Selector.select()：查看选择器注册的通道数；
 
 # 多线程
 
-# 多线程概述
+并行与并发：
 
-进程：一个正在运行的程序；在计算机中的运行路径；
+- 并行：指多个任务同时运行。
+- 并发：指多个任务轮询交替执行。由于轮询时间间隔短，使人感觉多个任务同时运行。
 
-一个程序只能有一个进程；
+进程与线程：
 
-程序是静态的，进程是动态的；
+- 进程：一段程序的执行过程。进程作为分配资源的基本单位。
 
-线程：进程的组成单元，在一个进程中有一个或多个线程；
+- 线程：一个进程可以包含多个线程。线程作为独立运行和独立调度的基本单位。
 
-并发：多个任务轮询交替执行；
+  由于线程比进程更小，基本上不拥有系统资源，故对它的调度所付出的开销就会小得多，能更高效的提高系统多个程序间并发执行的程度。
 
-并行：多任务同时执行；
+多线程：
+
+- 在一个程序中，这些独立运行的程序片段叫作“线程”（Thread），利用它编程的概念就叫作“多线程处理”。多线程是为了同步完成多项任务，不是为了提高运行效率，而是为了提高资源使用效率来提高系统的效率。线程是在同一时间需要完成多项任务的时候实现的。
 
 CPU调度方式：
 
-①时间片轮询；
+- 时间片轮询：
+- 抢占式：
 
-②抢占式调度方式； Java采用抢占式；
+## 线程
 
-进程与线程共享“堆内存和方法区”；一个线程一个“栈内存”；
+- 用户线程：前台线程，
+- 守护线程：后台线程，守护线程作用是为其他前台线程的运行提供便利服务，而且仅在普通、非守护线程仍然运行时才需要。如果没有用户线程，守护线程也就没有存在下去的意义了。
 
- 
+### 创建线程
 
-Java程序的运行原理：
+1. 继承Thread类，重写 run() 方法。
+2. 实现Runnable接口，重写 run() 方法。本质是 `Thread(Runnable target)` ；
 
-当使用Java命令启动一个程序的时候，JVM启动，就启动了一个进程；main方法会执行，main方法就是该进程中的一个线程（主线程），同时也会启动GC是后台线程（守护线程）；
+### 线程状态
 
- 
+- **新建状态（New）**：创建线程后，进入新建状态。
+- **就绪状态（Runnable）**：线程调用 start() 方法进入就绪状态，随时准备获取CPU使用权。
+- **运行状态（Running）**：CPU调度该线程，线程获取到CPU使用权，进入运行状态。
+- **阻塞状态（Blocked）**：① wait()，进入等待阻塞，② 获取synchronized同步锁时，锁对象被其他线程占用，进入同步阻塞状态，③ sleep()，④ join()，⑤阻塞式 IO 操作；
+- **死亡状态（Dead）**：① 线程执行完毕，② 线程异常退出，③ stop()；
 
-## 创建线程
+**阻塞&阻塞解除**：
 
-1.创建线程
-
-①继承Thread类；
-
-②实现Runnable接口：本质是[Thread](mk:@MSITStore:C:\Users\admin\Desktop\JDK_API_1.6_zh_中文.CHM::/java/lang/Thread.html#Thread(java.lang.Runnable))([Runnable](mk:@MSITStore:C:\Users\admin\Desktop\JDK_API_1.6_zh_中文.CHM::/java/lang/Runnable.html) target)；
-
-核心步骤：重写run方法，写入该线程要完成的事情；
-
-2.使用步骤： 
-
-```
-  a）重写run方法；
-
-  b）创建线程对象；
-
-  c）调用start()；
-```
-
-3.两种线程实现方式的区别：
-
-|        | 继承Thread类             | 实现Runnable接口   |
-| ------ | ------------------------ | ------------------ |
-| 优点： | 可直接使用线程所有方法； | 多实现；           |
-| 缺点： | 单继承；                 | 不能直接创建线程； |
-
- 
-
-## 线程控制
-
-1.线程名称
-
-①设置名称：
-
-Thread(String name)；
-
-setName(String name)；
-
-②String getName()；
-
-③long getId()；//线程终生不变的唯一的标识符；
-
-系统会为创建的线程设置默认Name：Thread-01；
-
-主线程默认Name：main；
-
-2.获取当前执行线程
-
-Thread.currentThread()；返回对当前正在执行的线程对象的引用；
-
-3.线程休眠
-
-Thread.sleep(long millis)；在指定的毫秒数内让当前正在执行的线程休眠（暂停执行）；
-
-4.守护线程
-
-void setDaemon(true)；将线程标记为守护线程；
-
-isAlive()；判断线程是否是活动状态（已启动未终止）；
-
-isDaemon()；判断线程是否是守护线程；
-
-5.加入线程
-
-void join()；当前线程暂停执行，直到加入的线程执行完毕；
-
-应用：可以让另一个线程优先执行；
-
- 
-
-6.礼让线程
-
-Thread.yield()；暂停当前正在执行的线程对象，其他线程并不一定能抢占到。
-
-7.线程优先级
-
-Java抢占式线程调度算法；优先级1-10；默认优先级5；
-
-getPriority()；返回线程的优先级。
-
-setPriority(int newPriority)；更改线程的优先级。
-
- 
-
-线程异常只能处理，不能抛出，无接受异常者；
-
- 
-
- 
-
-## 线程的生命周期
-
-线程状态
-
-1.新建（New）：创建线程对象（new）；JVM为其分配内存，并初始化其成员变量的值
-
-2.就绪（Runnable）：线程对象调用start()；JVM为其创建方法调用栈和程序计数器，等待CPU调度运行；
-
-3.运行（Running）：线程获得CPU使用权，开始执行run()；
-
-4.阻塞（Blocked）：当前正在执行的线程由于某种原因（休眠，礼让，时间到达）暂时失去CPU使用权，等待再次获得CPU使用权；
-
-线程进入阻塞状态：
-
-①wait()；
-
-②执行同步锁时，锁对象被其他线程占用；
-
-③IO操作；
-
-④sleep()，join()；
-
-解除阻塞：
-
- 
-
-\5.    死亡（Dead）：线程执行结束；isAlive()==false；
-
-①run()或call()方法执行完成，线程正常结束。
-
-②线程抛出一个未捕获的Exception或Error。
-
-③直接调用该线程stop()方法来结束该线程——该方法容易导致死锁，通常不推荐使用。
-
- 
-
-  
-
-|      |                                                              |
-| ---- | ------------------------------------------------------------ |
-|      | ![img](file:///C:/Users/17794/AppData/Local/Temp/msohtmlclip1/01/clip_image001.gif) |
-
- 
-
-
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
-![index](file:///C:/Users/17794/AppData/Local/Temp/msohtmlclip1/01/clip_image003.jpg)
-
- 
+- wait() 进入阻塞，notify() 与 notifyAll() 解除阻塞。
+- 等待同步锁进入阻塞，获得同步锁解除阻塞。
+- 阻塞式IO操作进入阻塞，阻塞式IO结束解除阻塞。
+- sleep() 进入阻塞，睡眠时间到解除阻塞。
+- join() 进入阻塞。
 
 ### 线程同步
 
 线程同步：保护共享数据，防止数据不一致；
 
-①同步代码块：
+1. 同步方法：
+2. 同步代码块：
 
-   synchronized(obj){   }   
+## 线程池
 
-锁对象：可任意对象；但要保证多线程使用同一锁对象，实现多线程同步；
+1、线程是稀缺资源，使用线程池可以减少创建和销毁线程的次数，每个工作线程都可以重复使用。
 
-不能在run()中的同步代码块中使用this作为锁对象；
+2、可以根据系统的承受能力，调整线程池中工作线程的数量，防止因为消耗过多内存导致服务器崩溃。
 
-②同步方法：
+### 线程池创建
 
-同步方法：synchronized关键字修饰的方法；
+```
+public ThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue, RejectedExecutionHandler handler) 
+```
 
-普通方法锁对象：this；
-
-静态方法锁对象：本类Class对象；
-
-#### 多线程环境中安全使用集合API
-
-Collections.synchronizedXxxx()；
-
-Collections中的静态synchronized方法：
-
-①Collection synchronizedCollention(Collection c)；
-
-②List synchronizedList(list l)；
-
-③Set synchronizedSet(Set s)；
-
-④Map synchronizedMap(Map m)；
-
-   // Synchronized集合是线程安全的，但Iterator不是线程安全的；   List list = Collections.synchronizedList(new   ArrayList());      ...   //迭代时，阻塞其他线程调用add()或remove()修改元素；   synchronized(list) {       Iterator   i = list.iterator(); // Must be in synchronized block         while   (i.hasNext())               foo(i.next());     }   
-
- 
-
-## 定时任务
-
-Timer类
-
-TimerTask：实现 Runnable接口，重写run()方法；由 Timer 安排为一次执行或重复执行的任务。 
-
-void schedule(TimerTask task, Date firstTime, long period)；
-
-*task 执行的任务
-
-*firsttime 开始执行的时间
-
-*period 任务的间隔执行时间
-
- 
-
- 
-
- 
-
-## Java并发编程Executor框架与线程池
-
-Executor框架：基于并发编程的线程池；
-
-Executor：
-
-ExecutorService：
-
-#### 创建线程池
-
-Executors的静态方法：
+> - corePoolSize：线程池核心线程数量
+> - maximumPoolSize：线程池最大线程数量
+> - keepAliverTime：当活跃线程数大于核心线程数时，空闲的多余线程最大存活时间
+> - unit：存活时间的单位
+> - workQueue：存放任务的队列
+> - handler：超出线程范围和队列容量的任务的处理程序
 
 ①创建一个固定线程数的线程池：
 
@@ -708,121 +528,25 @@ static ScheduledExecutorService newScheduledThreadPool(int corePoolSize)
 
 ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit)；
 
-- command - 要执行的任务
-- delay - 从现在开始延迟执行的时间
-- unit - 延迟参数的时间单位 
+*command - 要执行的任务
 
- 
+*delay - 从现在开始延迟执行的时间
+
+*unit - 延迟参数的时间单位 
 
 一般情况下，生命周期短的CachedThreadPool是首选；但是在特殊情况下（线程数>系统负载），生命周期长的会选择FixedThreadPool；
 
- 
+### 线程池实现原理
 
-#### 线程池可执行的任务：
+1、判断**线程池里的核心线程**是否都在执行任务，如果不是（核心线程空闲或者还有核心线程没有被创建）则创建一个新的工作线程来执行任务。如果核心线程都在执行任务，则进入下个流程。
 
-Rannable接口：public void run()；//无返回值；
+2、线程池判断工作队列是否已满，如果工作队列没有满，则将新提交的任务存储在这个工作队列里。如果工作队列满了，则进入下个流程。
 
-Callable<v>接口：public V call()； //有返回值；
+3、判断**线程池里的线程**是否都处于工作状态，如果没有，则创建一个新的工作线程来执行任务。如果已经满了，则交给饱和策略来处理这个任务。
 
- 
 
-submit()；
 
-get()；
 
- 
-
-线程池的生命周期
-
-运行状态：
-
-关闭状态：shutdown()；任务提交，不在执行新任务；
-
-终止状态：任务全部提交完毕
-
- 
-
-## 线程协作
-
-多个线程同时完成一个任务时，多个线程共享任务数据；防止数据不一致，使用线程同步（synchronized）机制；
-
-synchronized：
-
-原子性：在每次执行任务时，能保证只有一个线程在执行任务；
-
-可见性：针对每一个线程执行任务时，所见到的数据都真是有效；
-
-1.用5个售票窗口销售100张火车票；
-
-2.银行账户有1000元，一个人去柜台取钱，另一个人去ATM机取钱；
-
-取款方式：柜台，ATM机；
-
-银行类，一个账户，两个线程模拟取钱，
-
-3.火车过山洞：
-
-火车由A到B，中间有一个隧道，每次只允许一趟火车通过，每趟火车经过隧道需要10s，为防止事故发生，每次只允许一趟火车经过，现有5趟火车经过隧道；
-
- 
-
-## 线程死锁
-
-多个线程争取锁对象的持有权时的竞争现象；
-
-避免死锁：
-
-①尽量避免锁的嵌套使用；
-
-②让程序执行时，尽可能只获得一个锁；
-
-③超时限制：Lock中的tryLock，在获取锁对象时，可设置时间限制；
-
- 
-
-## 线程通信
-
-### Object类的监视器方法（monitor）
-
-等待/通知机制
-
-Object监视器方法：wait()、notify()、notifyAll()；
-
-wait()：使线程进入等待状态，如果没有线程来唤醒，则一直处于等待状态；
-
-wait(long timeout)：使线程进入等待状态； 
-
-notify()：唤醒当前处于等待状态的随机一个线程；
-
-notifyAll()：唤醒当前处于等待状态的所有线程；
-
-锁对象执行wait()；和notify()；
-
- 
-
-### 互斥锁（Lock接口）
-
-互斥锁：在一次执行中只能有一个线程持有锁对象；（JDK5新特性）
-
-Lock接口+Condition接口；
-
-2个以上线程通信，用到互斥锁；
-
- 
-
-### 生产者-消费者模型
-
-基于等待/通知机制；
-
-①仓库：共享数据
-
-②生产者：线程同步；不满足条件，wait；满足条件，生产产品+notify；
-
-③消费者：线程同步；不满足条件，wait；满足条件，消费产品+notify；
-
-# JVM
-
-https://blog.csdn.net/wdjhzw/article/details/27720445
 
 # 数据结构
 
@@ -846,18 +570,65 @@ https://blog.csdn.net/wdjhzw/article/details/27720445
 
 二叉树：有且仅有一个根节点，每个节点至多有两个子节点。
 
-B+树：索引
+### B+树
+
+B+树：MySQL 索引
+
+### 红黑树
 
 红黑树（自平衡二叉查找树）
 
+**红黑树特性**：
+（1）每个节点要么红色，要么黑色。
+（2）根节点是黑色。
+（3）每个叶子节点（NIL）都是黑色空节点。 [注意：这里叶子节点，是指为空(NIL或NULL)的叶子节点！]
+（4）每个红色节点的两个子节点都是黑色。(从每个叶子到根的所有路径上不能有两个连续的红色节点)
+（5）从任一节点到其每个叶子的所有路径都包含相同数目的黑色节点。
+
+**变色**：红色节点变为黑色节点
+
+
+
+**旋转**：
+
+左旋转：
+
+右旋转：
+
+
+
+
+
 哈夫曼树（最优树）
+
+ 
+
+## 图
+
+
 
 ## 查找
 
 **二分查找**：
 
-```
-
+```java
+// 二分查找
+public static int binarySearch(int[] a, int key){
+    int middle = a.length/2;
+    int low = 0;
+    int high = a.length - 1;
+    while(low<=high){
+        middle = (low+high)/2;
+        if(a[middle] > key){
+            high = middle -1;
+        }else if(a[middle] <key){
+            low = middle + 1;
+        }else {
+            return middle; // 返回目标值索引
+        }
+    }
+    return -1; // 未查找到key
+}
 ```
 
 ## 排序
@@ -951,10 +722,6 @@ public void quickSort(int[] arr) {
 }
 ```
 
-
-
-
-
 # 数据库
 
 ## 分页SQL
@@ -1027,11 +794,14 @@ limit (currentPage-1)*pageSize, pageSize
 
 ## SQL优化
 
-
-
-
-
-
+1. 对查询进行优化，应尽量避免全表扫描，首先应考虑在 where 及 order by 涉及的列上建立索引
+2. 应尽量避免在 where 子句中对字段进行 null 值判断，
+3. 应尽量避免在 where 子句中使用!=或<>操作符
+4. 应尽量避免在 where 子句中使用 or 来连接条件
+5. 任何地方都不要使用 select * from t ，用具体的字段列表代替“*”
+6. 避免频繁创建和删除临时表，以减少系统表资源的消耗
+7. 尽量避免大事务操作，提高系统并发能力。
+8. 尽量避免向客户端返回大数据量，若数据量过大，应该考虑相应需求是否合理
 
 # JavaWeb
 
@@ -1118,19 +888,63 @@ response.setHeader("Access-Control-Allow-Origin","*");
 
 ### MyBatis的ORM原理
 
+① 封装JDBC
+
+② 利用反射机制实现Java类与SQL语句之间的转换。
+
+MyBatis API：
+
+- SqlSession：作为MyBatis工作的主要顶层API，表示和数据库交互时的会话，完成必要数据库增删改查功能。
+- Executor：MyBatis执行器，是MyBatis 调度的核心，负责SQL语句的生成和查询缓存的维护。
+- StatementHandler：封装了JDBC Statement操作，负责对JDBC statement 的操作，如设置参数等。
+- ParameterHandler：负责对用户传递的参数转换成JDBC Statement 所对应的数据类型
+- ResultSetHandler：负责将JDBC返回的ResultSet结果集对象转换成List类型的集合
+- TypeHandler：负责java数据类型和jdbc数据类型(也可以说是数据表列类型)之间的映射和转换
+
 
 
 ## Spring
 
+### Spring容器
+
+实例化Spring容器：通过XML文件利用反射机制，Spring容器会预初始化所有类。
+
+```
+ApplicationContext ctx  = new ClassPathXmlApplicationContext("bean.xml");
+```
+
 ### Spring IOC
 
+基于Java反射实现。
+
 IOC/DI（控制反转/依赖注入），在传统开发中，使用new关键字创建对象，程序主动去创建对象，程序耦合度变高；而在Spring中，由Spring容器管理对象，主动负责控制对象的生命周期和对象间的关系，程序被动接受。即由IoC容器帮对象找相应的依赖对象并注入，而不是由对象主动去找。
+
+**Spring IOC 反射原理**：
+
+类：解析XML文件，获取Bean的class，可以得到Bean的全类名，利用反射机制得到Bean的Class对象，实例化Bean对象，放入Spring容器中。
+
+引用：解析XML文件，获取Bean的引用属性的Bean的ID，进而获取到相应的Bean，利用反射获取到setter()方法，将引用Bean注入进去。
+
+**Spring IOC/DI**：
+
+属性注入：调用setter()方法进行注入。
+
+构造注入：调用构造方法进行注入。
+
+**Spring 容器**：
+
+Spring容器是生成Bean实例的工厂，如BeanFactory，ApplicationContext，XmlBeanFactory等。推荐使用ApplicationContext。
+
+容器中bean的作用域：
+
+- singleton：单例模式，在整个Spring IoC容器中，使用singleton定义的bean将只有一个实例；
+- prototype：原型模式，每次通过容器的getBean方法获取prototype定义的Bean时，都将产生一个新实例；
+
+
 
 ### Spring AOP
 
 AOP（面向切面编程），将交叉业务逻辑织入到主业务逻辑中。底层是使用动态代理模式实现。
-
-### Spring AOP 事务管理
 
 
 
@@ -1186,9 +1000,144 @@ public class Singletonfinal {
 
 ### 工厂模式
 
+工厂模式：实例化对象模式；（工厂代替new操作）；
 
+#### 简单工厂模式
 
+静态工厂模式；
 
+①具体工厂角色：创建产品对象
+
+②抽象产品角色：定义产品的标准和规范
+
+③具体产品角色：具体实现产品
+
+优点：创建对象不使用new，使用工厂创建；
+
+缺点：使工厂与产品产生了高度耦合，不符合类设计的开闭原则；
+
+#### 工厂方法模式
+
+①抽象工厂角色：
+
+②具体工厂角色：
+
+③抽象产品角色：
+
+④具体产品角色：
+
+优点：抽象工厂类的存在，降低了工厂与产品的耦合度；
+
+符合程序的开闭原则，程序扩展性更强；
+
+缺点：在扩展程序的时候，都需要创建具体工厂，程序较复杂；
+
+#### 抽象工厂模式
+
+①抽象工厂角色：
+
+②具体工厂角色：
+
+③抽象产品角色：
+
+④具体产品角色：
+
+优点：分离接口与实现：客户端使用抽象工厂来创建需要的对象；
+
+切换产品族变的容易：
+
+缺点：不易扩展新产品：
 
 ### 代理模式
 
+作用：增强被代理对象；织入交叉业务逻辑增强主业务逻辑。
+
+#### 静态代理：
+
+代理实现完全由程序员自己实现；只能针对特定的对象实现代理
+
+实现步骤：
+
+①定义主业务逻辑接口；
+
+②实现主业务接口；
+
+③代理类实现接口，增强主业务；
+
+a）声明被代理对象：成员变量；
+
+b）绑定被代理对象：有参构造器；
+
+c）代理类增强主业务：方法扩展；
+
+#### 动态代理：
+
+可以代理任意对象；
+
+##### 1.JDK动态代理实现：
+
+InvocationHandler接口和proxy类；
+
+[Object](mk:@MSITStore:C:\Users\admin\Desktop\JDK_API_1.6_zh_中文.CHM::/java/lang/Object.html) [invoke](mk:@MSITStore:C:\Users\admin\Desktop\JDK_API_1.6_zh_中文.CHM::/java/lang/reflect/InvocationHandler.html#invoke(java.lang.Object, java.lang.reflect.Method, java.lang.Object[]))([Object](mk:@MSITStore:C:\Users\admin\Desktop\JDK_API_1.6_zh_中文.CHM::/java/lang/Object.html) proxy, [Method](mk:@MSITStore:C:\Users\admin\Desktop\JDK_API_1.6_zh_中文.CHM::/java/lang/reflect/Method.html) method, [Object](mk:@MSITStore:C:\Users\admin\Desktop\JDK_API_1.6_zh_中文.CHM::/java/lang/Object.html)[] args)；
+
+proxy：代理对象
+
+method：扩展方法
+
+args：扩展方法需要的参数
+
+static Object newProxyInstance(ClassLoader loader, Class<?>[] interfaces, InvocationHandler h) 
+
+loader：被代理对象的类加载器；
+
+interfaces：被代理类实现的接口；
+
+h：在代理类中所需要做的处理；被代理对象的处理器；
+
+代理对象必须实现接口，代理的是接口；
+
+实现步骤：
+
+①定义主业务逻辑接口；
+
+②实现主业务接口；
+
+③编写针对代理对象的处理方式； 
+
+implements InvocationHandler，实现invoke()；
+
+使用步骤：
+
+①创建代理对象实例
+
+②创建代理的处理器对象并绑定被代理对象；
+
+③创建代理对象（被代理对象的接口）
+
+proxy.newProxyInstance()，返回值是接口对象；
+
+④通过代理对象调用主业务逻辑；
+
+##### 2.cglib动态代理实现：
+
+优点：代理类不需要实现接口；运行速度快；
+
+实现步骤：
+
+①实现主业务逻辑
+
+②代理类implements MethodInterceptor
+
+增强器：Enhancer；
+
+实现interceptor方法
+
+methodProxy.invokeSuper(被代理对象，方法参数)；
+
+使用步骤：
+
+①生成代理对象；
+
+②代理对象调用方法；
+
+ 
