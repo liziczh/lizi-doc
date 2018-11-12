@@ -236,5 +236,35 @@ constructor(private service: HeroService) { }
 
 
 
+### 数据绑定
 
+DOM属性绑定：`prop={{x}}` 与 `[prop]="x"` 相同。
+
+`[x]`：从数据源到试图。
+
+`(x)`：从视图到数据源。
+
+`[(x)]`：双向绑定。
+
+```java
+[x]="xx" 
+(xChange)="xx=$event"
+```
+
+`[(ngModel)]="x"` 本质：
+
+```java
+[ngModel]="x"
+(ngModelChange)="x=$event"
+```
+
+模板引用变量
+
+`#x`：表示一个 DOM 元素。
+
+`@Input`：组件输入属性，当它通过属性绑定的形式被绑定时，值会“流入”这个属性。
+
+`@Output：`：组件输出属性（EventEmitter），可观察对象型属性。
+
+为属性指定别名：`@Output(alias) propertyName = ...`；
 
