@@ -1,5 +1,7 @@
 # Angular2
 
+[Angular](https://www.angular.cn/) 是由谷歌开发与维护一个开发跨平台应用程序的框架，同时适用于手机与桌面。
+
 Angular 快速上手
 
 安装 Angular CLI 
@@ -21,7 +23,7 @@ cd MyAngularApp
 ng serve --open
 ```
 
-Angular 项目结构
+Angular 组件结构
 
 - `app.component.html` - 组件模板，HTML。
 - `app.component.css` - 组件私有 CSS 样式。
@@ -267,4 +269,3 @@ DOM属性绑定：`prop={{x}}` 与 `[prop]="x"` 相同。
 `@Output：`：组件输出属性（EventEmitter），可观察对象型属性。
 
 为属性指定别名：`@Output(alias) propertyName = ...`；
-

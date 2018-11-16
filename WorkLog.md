@@ -1,22 +1,38 @@
-### QM_Admin
+### prodmp 标签DMP平台
 
-自定义日期组件。
+1. 为趋势图添加日期范围组件
 
-树节点半选中状态。
+2. 下载指定日期范围内的趋势数据的 Excel 表。
 
-操作日志记录测试。
+### QM_Admin 后台管理系统
 
-表单参数校验。
+【20180925-20181113】
 
----
+了解但未深入的知识点：
 
-Accordion 的 Lazy Load。
+- Druid 数据源。
+- SpringBoot AOP 实现日志功能。
+- Form 表单的参数校验。
+- Accordion 的 Lazy Load。
+- DateBox 日期限制功能。
 
-DateBox 与 Calendar组件结合实现日期限制功能：自定义组件，组件注入。
+知识盲区：
+
+- 微服务。
+- Redis 缓存，RabbitMQ 消息队列。
+- Shiro 权限管理，Solr 全局检索。
+- Spring Cloud Ribbon 负载均衡，Eureka 服务注册中心。
+- Java 新特性，Java 函数式编程。
+
+UI关键组件：DateBox，Tree。
+
+总结：
+
+- 写接口是基本功，基本功要扎实，接口要可用性高、易读性强。
 
 #### 产品模块树&标签树
 
-我完成了：
+完成了：
 
 - 查询公司的模块树与标签树（以全树为基树，选中公司所选节点）。
 
@@ -24,12 +40,12 @@ DateBox 与 Calendar组件结合实现日期限制功能：自定义组件，组
 
 - 产品模块树&标签树前端组件（eui-tree）。
 
-我学到了：
+学到了：
 
 - 学习了 List => Map => Tree。
-- 学习了 EasyUI for Angular（Tree）。
+- 学习了 Ng-EasyUI（Tree）。
 
-> √：Tree。
+> √：ListConvertToTree，Tree。
 
 ```java
 /**
@@ -105,14 +121,14 @@ private List<TreeNode> convertToTree(List<Module> moduleList, String checkedIds)
 
 邮件服务模块（MailService）
 
-我完成了：
+完成了：
 
 - 使用 JavaMailSender 实现邮件发送，使用 FreeMarker 模板生成Html邮件。
 - 邮件发送：重置密码、解绑微信、授权用户。
 - 异步发送邮件。
 - 邮件日志记录（SentEmailLog），记录发送失败的异常信息。
 
-我学到了：
+学到了：
 
 - 学习了使用 SpringBoot 邮件服务发送邮件。
 - 学习了使用 FreeMarker 模板引擎生成 HTML。
@@ -123,16 +139,16 @@ private List<TreeNode> convertToTree(List<Module> moduleList, String checkedIds)
 
 产品时间模块（ProductTime）
 
-我完成了：
+完成了：
 
 - 使用 SpringBoot 开发产品时间模块（的后端接口（增删改查）。
-- 使用 Angualr2+EasyUI 开发产品时间模块前端组件（初始化/添加/修改/删除）。
+- 使用 Angualr+EasyUI 开发产品时间模块前端组件（初始化/添加/修改/删除）。
 
-我学到了：
+学到了：
 
 - 学习 SpringBoot，Spring Data JPA。
 - 使用 [Swagger2](http://localhost:8080/swagger-ui.html#/) 测试 RESTful 接口。
 - 学习了 Angular2（组件、服务、数据绑定、管道、路由，FormGroup等）。
-- 学习了 EasyUI for Angular（DataGrid，Dialog，DateBox）。
+- 学习了 Ng-EasyUI（DataGrid，Dialog，DateBox）。
 
-> √：SpringBoot，Spring Data JPA，Swagger2，Angular2，EasyUI for Angular。
+> √：SpringBoot，Spring Data JPA，Swagger2，Angular2，Ng-EasyUI。
