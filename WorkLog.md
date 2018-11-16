@@ -1,7 +1,6 @@
 ### prodmp 标签DMP平台
 
-1. 为趋势图添加日期范围组件
-
+1. 使用 Angular Material 为趋势图添加日期范围组件。
 2. 下载指定日期范围内的趋势数据的 Excel 表。
 
 ### QM_Admin 后台管理系统
@@ -21,12 +20,12 @@
 - 微服务。
 - Redis 缓存，RabbitMQ 消息队列。
 - Shiro 权限管理，Solr 全局检索。
-- Spring Cloud Ribbon 负载均衡，Eureka 服务注册中心。
+- Spring Cloud 生态圈。
 - Java 新特性，Java 函数式编程。
 
 UI关键组件：DateBox，Tree。
 
-总结：
+**总结**：
 
 - 写接口是基本功，基本功要扎实，接口要可用性高、易读性强。
 
