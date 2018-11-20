@@ -24,11 +24,11 @@
 
 **Angular 与 AngularJS 有什么区别**：
 
-- 不再有`Controller`和 `Scope`
-- 更好的组件化及代码复用
-- 更好的移动端支持
-- 引入了 `RxJS` 与 `Observable`
-- 引入了 `Zone.js`，提供更加智能的变化检测
+- 不再有`Controller`和 `Scope`。
+- 更好的组件化及代码复用。
+- 更好的移动端支持。
+- 引入了 `RxJS` 与 `Observable`。
+- 引入了 `Zone.js`，提供更加智能的变化检测。
 
 ### Angular 配置环境
 
@@ -72,10 +72,6 @@ ng new PROJECT-NAME
 cd PROJECT-NAME
 ng serve
 ```
-
-### 数据绑定
-
-插值表达式：`{{expression}}` ，`{{expression | pipe}}` ；
 
 ### 自定义组件
 
@@ -289,14 +285,132 @@ Angular 通过依赖注入将服务注入到组件中。
 
 特定库：
 
-- 动画：
-- Forms：
+- 动画：Angular 动画库
+- Forms：基于 HTML 的验证和脏数据检查。
 
+开发：
 
+- 编译：Angular 为开发环境提供了 JIT（即时）编译方式，为生产环境提供了 AOT（预先）编译方式。
+- 测试：对应用的各个部件运行单元测试。
 
+环境搭建：
 
+- CLI命令参考手册：
+- 工作空间与文件结构：
+- npm包：
 
+## 组件与模板
 
+创建新组件：
 
+```
+ng generate component COMPONENT-NAME
+```
 
+定义组件元信息：
 
+```
+@Component({
+   selector: 'app-component-name',  // 用于定义组件在HTML代码中匹配的标签
+   templateUrl: './component-name.component.html', // 定义组件的模板视图文件路径
+   styleUrls: ['./component-name.component.css']  // 定义组件的样式文件路径
+})
+```
+
+定义组件类：
+
+```
+export class Student  {
+  name = 'zhangsan'; 
+}
+```
+
+### 显示数据
+
+1.使用插值表达式：`{{ value }}`。
+
+2.使用内联模板（`template`）或模板文件（`templateUrl`）。
+
+3.使用 `*ngIf` 条件显示：
+
+```html
+<p *ngIf="heroes.length > 3">There are many heroes!</p>
+```
+
+4.使用 `*ngFor` 循环显示：
+
+```html
+<ul>
+  <li *ngFor="let hero of heroes">
+    {{ hero.name }}
+  </li>
+</ul>
+```
+
+### 模板语法
+
+`<script>` 是无效的，它被忽略了。
+
+`<html>`、`<body>` 和 `<base>` 是无意义的。
+
+**插值表达式**：`{{ value }}` 
+
+- 可进行求值计算。
+- 可调用宿主组件的方法。
+
+> 插值表达式是一种特殊语法，Angular 将其转换为了属性绑定。
+
+**模板表达式**：属性绑定使用
+
+模板**表达式**产生一个值。 Angular 执行这个表达式，并把它赋值给绑定目标的属性，这个绑定目标可能是 HTML 元素、组件或指令。在插值表达式/属性绑定中常用到模板表达式。
+
+表达式上下文就是这个组件实例。表达式中的上下文变量是由*模板变量*、*指令的上下文变量*（如果有）和*组件的成员*叠加而成的。（模板变量 > 指令上下文变量 > 组件成员变量）。
+
+> 模板表达式是没有可见的副作用，模板表达式除了目标属性的值以外，不应该改变应用的任何状态。这条规则是 Angular “单向数据流”策略的基础。
+
+JavaScript 中那些具有或可能引发副作用的表达式是被禁止的：
+
+- 赋值 (`=`, `+=`, `-=`, ...)
+- `new` 运算符
+- 使用 `;` 或 `,` 的链式表达式
+- 自增和自减运算符：`++` 和 `--`
+- 不支持位运算 `|` 和 `&`
+
+**模板语句**：事件绑定使用
+
+模板语句用来响应由绑定目标（如 HTML 元素、组件或指令）触发的事件 `(event)="statement"` 。
+
+模板上下文的变量名 > 组件上下文中的变量名。
+
+> 模板语句是有副作用的。 这是事件处理的关键。因为你要根据用户的输入更新应用状态。响应事件是 Angular 中“单向数据流”的另一面。 在一次事件循环中，可以随意改变任何地方的任何东西。
+
+#### **数据绑定**
+
+- 插值表达式：`{{value}}`；（组件 --> DOM）
+- 属性绑定：`[prop] = "value"`；（组件 --> DOM）
+- 事件绑定：`(event) = "handler"`；（组件 <-- DOM）
+- 双向绑定：`[(ngModel)] = "property"`；（组件 <--> DOM）
+
+数据绑定不是设置 HTML attr，而是设置 DOM 元素、组件和指令的 prop。
+
+**HTML attr 与DOM prop **：
+
+- attr 值不可改变，指定初始值；prop 值可以改变，指定当前值。
+
+- 在 Angular 中，attribute 唯一的作用是用来初始化元素和指令的状态。当进行数据绑定时，只是在与元素和指令的 property 和事件打交道。
+
+**attribute、class、style 绑定**：
+
+- attribute 绑定：`[attr.colspan]="value"` 。
+- css 绑定：`[class.class-name]="逻辑表达式"` 。
+- style 绑定：`[style.style-prop]="逻辑表达式"` 。
+
+> 当元素没有属性可绑的时候，就必须使用 attribute 绑定。
+
+**$event 和事件处理语句**：
+
+$event：事件载荷。通过 $event 事件对象传递关于此事件的信息 (数据值) 。由 EventEmitter 实例的 emit() 方法抛出的数据。
+
+事件属于指令，指令使用 Angular EventEmitter 触发自定义事件。
+
+自定义事件：Angular EventEmitter 的一个实例。
