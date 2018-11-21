@@ -233,7 +233,7 @@ NgModule 系统与 JavaScript（ES2015）用来管理 JavaScript 对象的模块
 
 - 管道：数据转换。
 
-- 指令：程序逻辑应用到视图上，（`*ngIf`，`*ngFor`）。
+- 指令：程序逻辑应用到视图上，（`*ngIf`，`*ngFor`，`NgModel`）。
 
 **数据绑定**：
 
@@ -259,8 +259,8 @@ Angular 模板是动态的，Angular 渲染时，根据指令对 DOM 进行转�
 
 指令分为结构型指令和属性型指令。
 
-- 结构型指令：`*ngIf`，`*ngFor`。
-- 属性型指令：`ngModel`。
+- 结构型指令：`*ngIf`，`*ngFor`，`*ngSwitch`。
+- 属性型指令：`ngModel`，`NgClass`，`NgStyle`。
 
 ### 服务（Service）
 
@@ -303,13 +303,13 @@ Angular 通过依赖注入将服务注入到组件中。
 
 创建新组件：
 
-```
+```shell
 ng generate component COMPONENT-NAME
 ```
 
 定义组件元信息：
 
-```
+```ts
 @Component({
    selector: 'app-component-name',  // 用于定义组件在HTML代码中匹配的标签
    templateUrl: './component-name.component.html', // 定义组件的模板视图文件路径
@@ -319,7 +319,7 @@ ng generate component COMPONENT-NAME
 
 定义组件类：
 
-```
+```ts
 export class Student  {
   name = 'zhangsan'; 
 }
@@ -384,7 +384,7 @@ JavaScript 中那些具有或可能引发副作用的表达式是被禁止的：
 
 > 模板语句是有副作用的。 这是事件处理的关键。因为你要根据用户的输入更新应用状态。响应事件是 Angular 中“单向数据流”的另一面。 在一次事件循环中，可以随意改变任何地方的任何东西。
 
-#### **数据绑定**
+#### 数据绑定
 
 - 插值表达式：`{{value}}`；（组件 --> DOM）
 - 属性绑定：`[prop] = "value"`；（组件 --> DOM）
@@ -402,15 +402,115 @@ JavaScript 中那些具有或可能引发副作用的表达式是被禁止的：
 **attribute、class、style 绑定**：
 
 - attribute 绑定：`[attr.colspan]="value"` 。
-- css 绑定：`[class.class-name]="逻辑表达式"` 。
-- style 绑定：`[style.style-prop]="逻辑表达式"` 。
+- css 绑定：`[class.class-name]="逻辑表达式"` 。（一般用 NgClass）
+- style 绑定：`[style.style-prop]="逻辑表达式"` 。（一般用 NgStyle）
 
 > 当元素没有属性可绑的时候，就必须使用 attribute 绑定。
 
 **$event 和事件处理语句**：
 
-$event：事件载荷。通过 $event 事件对象传递关于此事件的信息 (数据值) 。由 EventEmitter 实例的 emit() 方法抛出的数据。
+$event：事件载荷，由 EventEmitter 实例的 emit() 方法抛出的数据。通过 $event 事件对象传递关于此事件的信息 (数据值) 。
 
-事件属于指令，指令使用 Angular EventEmitter 触发自定义事件。
+事件属于指令，自定义事件即一个 Angular EventEmitter 实例。指令调用 `EventEmitter.emit(payload)` 来触发事件，可以传入任何东西作为消息载荷。
 
-自定义事件：Angular EventEmitter 的一个实例。
+**双向数据绑定**：
+
+`[(x)]="value"` 本质即 `[x]="value"` 和 `(xChange)="value=$event"` 的结合。
+
+```ts
+@Input [x]: any
+@Output (xChange)= new EventEmitter<any>()
+```
+
+> 原生 HTML 元素不遵循 `x` 值和 `xChange` 事件的模式，但 Angular 以 NgModel 指令为桥梁，允许在表单元素上使用双向数据绑定。
+
+#### 内置指令
+
+**内置属性性指令**：
+
+ngClass：添加或移除一组 CSS 类。
+
+```html
+<div [ngClass]="currentClasses"></div
+```
+
+```ts
+this.currentClasses =  {
+  'saveable': this.canSave,
+  'modified': !this.isUnchanged,
+  'special':  this.isSpecial
+};
+```
+
+ngStyle：添加或移除一组 CSS 样式。
+
+```html
+<div [ngStyle]="currentStyles"></div>
+```
+
+```ts
+this.currentStyles = {
+  'font-style':  this.canSave      ? 'italic' : 'normal',
+  'font-weight': !this.isUnchanged ? 'bold'   : 'normal',
+  'font-size':   this.isSpecial    ? '24px'   : '12px'
+};
+```
+
+ngModel： 双向绑定到 HTML 表单元素。
+
+```html
+<input [(ngModel)]="currentHero.name">
+```
+
+```html
+<input [ngModel]="currentHero.name"
+  (ngModelChange)="currentHero.name=$event">
+```
+
+**内置结构性指令**：
+
+*ngIf：条件展示。
+
+```html
+<div *ngIf="currentHero">Hello, {{currentHero.name}}</div>
+```
+
+> 防范空指针异常。
+
+*ngFor：循环展示。
+
+```html
+<div *ngFor="let hero of heroes">{{hero.name}}</div>
+```
+
+> 使用 let 创建了一个名为 hero 的模板输入变量。
+
+```html
+<div *ngFor="let hero of heroes; let i=index">{{i + 1}} - {{hero.name}}</div>
+```
+
+> 通过模板输入变量捕获索引 `index` 的值。
+
+*ngSwitch：
+
+```
+<div [ngSwitch]="currentHero.emotion">
+  <app-happy-hero    *ngSwitchCase="'happy'"    [hero]="currentHero"></app-happy-hero>
+  <app-sad-hero      *ngSwitchCase="'sad'"      [hero]="currentHero"></app-sad-hero>
+  <app-confused-hero *ngSwitchCase="'confused'" [hero]="currentHero"></app-confused-hero>
+  <app-unknown-hero  *ngSwitchDefault           [hero]="currentHero"></app-unknown-hero>
+</div>
+```
+
+**模板引用变量**：
+
+模板引用变量（#var）：通常用来引用模板中的某个 DOM 元素。
+
+
+
+
+
+
+
+
+
