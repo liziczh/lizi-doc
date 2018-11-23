@@ -1,12 +1,16 @@
 ### AppInfo爬虫脚本
 
-1.爬虫框架（2days）：编写爬虫Demo。
+1. 爬虫框架（2days）：编写爬虫Demo。
 
-2.根据App包 { appPackage，AppName } 爬取App信息 { Source，appPackage,AppNameGrab，AppName，Category，AppCompany，ICON } 。
+2. 根据App包爬取App信息。
 
-3.爬取顺序：① 爬取豌豆荚 (../package-name)，② 爬取应用宝 (../appName=package-name)，③ 如果没有则插入null。
+   - App包 { [AppPackage：包URL]，[AppName：App名称] }
 
-4.写脚本（供运营使用）：爬取时启动脚本，待全部数据爬取完毕后关闭脚本。
+   - App信息 { [Source：App信息来源]，[AppPackage：包URL]，[AppNameGrab：App名称爬虫]，[AppName：App名称]，[Category：App分类]，[AppCompany：App公司]，[ICON：App图标] } 
+
+3. 爬取顺序：① 爬取豌豆荚 (../package-name)，② 爬取应用宝 (../appName=package-name)，③ 如果没有则插入null。
+
+4. 写脚本（供运营使用）：爬取时启动脚本，待全部数据爬取完毕后关闭脚本。
 
 > 爬虫框架选型，爬虫编写，脚本编写。
 
