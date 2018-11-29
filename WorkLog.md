@@ -1,18 +1,12 @@
 ### AppInfo爬虫脚本
 
-1. 爬虫框架（2days）：编写爬虫Demo。
+1. 使用 WebMagic 编写 Java 爬虫（根据App包名爬取App信息，[豌豆荚>应用宝]）。
 
-2. 根据App包爬取App信息。
+2. 脚本编写：启动爬虫（断点续爬），状态查询（脚本状态：运行/停止；爬取进度：当前已爬取条数、总条数、爬取完成率），停止爬虫（kill进程）。
 
-   - App包 { [AppPackage：包URL]，[AppName：App名称] }
-
-   - App信息 { [Source：App信息来源]，[AppPackage：包URL]，[AppNameGrab：App名称爬虫]，[AppName：App名称]，[Category：App分类]，[AppCompany：App公司]，[ICON：App图标] } 
-
-3. 爬取顺序：① 爬取豌豆荚 (../package-name)，② 爬取应用宝 (../appName=package-name)，③ 如果没有则插入null。
-
-4. 写脚本（供运营使用）：爬取时启动脚本，待全部数据爬取完毕后关闭脚本。
-
-> 爬虫框架选型，爬虫编写，脚本编写。
+> √：WebMagic，爬虫编写，脚本编写。
+>
+> ×：Python，Shell。
 
 ### prodmp 标签DMP平台
 
