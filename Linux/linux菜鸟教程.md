@@ -430,7 +430,7 @@ vim 三种模式：命令模式（Command mode），输入模式（Insert mode�
 
 `20<Enter>`：移动到光标后20行；
 
-2、搜索替换：
+2、查找替换：
 
 `/word`：向下寻找字符串；
 
@@ -439,3 +439,159 @@ vim 三种模式：命令模式（Command mode），输入模式（Insert mode�
 `[n]`：next，向下继续搜寻；
 
 `[N]`：向上继续搜寻；
+
+`:100,200s/word/WORD/g`：在第100行-200行之间查找word，并将其替换为WORD。
+
+`:100,200s/word/WORD/gc`：在第100行-200行之间查找word，请用户确认后将其替换为WORD。
+
+3、删除、复制与粘贴
+
+`x`：相当于 `[del]` ；
+
+`X`：相当于`[Backspace]`；
+
+`10x`：连续`[del]`10个字符；
+
+`dd`：删除整行；
+
+`10dd`：删除10行；
+
+`d1G`：删除光标到第一行的数据；
+
+`dG`：删除光标到最后一行的数据；
+
+`d0`：删除光标到该行第一个字符的数据；
+
+`d$`：删除光标到该行最后一个字符的数据；
+
+`yy`：复制整行；
+
+`10yy`：向下复制10行；
+
+`y1G`：复制光标到第一行的数据；
+
+`yG`：复制光标到最后一行的数据；
+
+`y0`：复制光标到该行第一个字符的数据；
+
+`y$`：复制光标到该行最后一个字符的数据；
+
+`p`：粘贴在光标下一行；
+
+`P`：粘贴在光标上一行；
+
+`J`：将光标所在行与下一行的数据结合成同一行；
+
+`u`：撤销；
+
+`[Ctrl]+r`：重做上一个动作；
+
+`.`：重复前一个动作；
+
+**一般模式切换到编辑模式**：
+
+`i`：从目前光标所在处输入；
+
+`I`：在目前所在行的第一个非空格符处开始输入；
+
+`a`：从目前光标所在的下一个字符处开始输入；
+
+`A`：从光标所在行的最后一个字符处开始输入
+
+`o`：在目前光标所在的下一行处输入新的一行；
+
+`O`：在目前光标所在处的上一行输入新的一行；
+
+`r`：取代光标所在的那一个字符一次；
+
+`R`：进入取代模式，取代光标所在的文字；
+
+**一般模式切换到指令行模式**：
+
+`:w`：写入硬盘；
+
+`:w!`：强制写入；具体能否写入，与用户权限有关；
+
+`:q`：退出；
+
+`:q!`：强制退出且不保存变更；
+
+`:wq`：保存退出；
+
+`ZZ`：若文件未变动，则不保存退出；若文件变动，则保存退出；
+
+`:w [filename]`：另存为；
+
+`:r [filename]`：读入其他文件数据；
+
+`:n1,n2 w [filename]`：将 n1 到 n2 的内容保存新文档；
+
+`! command`：暂时离开vim，前去执行命令；
+
+`:set nu`：设置行号；
+
+`:set nonu`：取消行号；
+
+#### linux yum
+
+yum（ Yellow dog Updater, Modified）是一个在Fedora和RedHat以及SUSE中的Shell前端软件包管理器。
+
+基於RPM包管理，能够从指定的服务器自动下载RPM包并且安装，可以自动处理依赖性关系，并且一次安装所有依赖的软体包，无须繁琐地一次次下载、安装。
+
+```shell
+yum [options] [command] [package ...]
+```
+
+1、检查更新：列出所有可更新的软件清单命令；
+
+```
+yum check-update
+```
+
+2、更新所有软件：
+
+```shell
+yum update
+```
+
+3、仅安装指定软件：
+
+```shell
+yum install <package_name>
+```
+
+4、仅更新指定软件：
+
+```shell
+yum update <package_name>
+```
+
+5、检查安装：列出所有可安裝的软件清单；
+
+```shell
+yum list
+```
+
+6、删除软件包：
+
+```shell
+yum remove <package_name>
+```
+
+7、查找软件包：
+
+```shell
+yum search <keyword>
+```
+
+8、清缓存：
+
+```shell
+yum clean packages   # 清除缓存目录下的软件包
+yum clean headers    # 清除缓存目录下的 headers
+yum clean oldheaders # 清除缓存目录下旧的 headers
+yum clean   # 清除缓存目录下的软件包及旧的headers
+yum clean all  # 同 yum clean
+yum clean packages # 同 yum clean
+yum clean oldheaders # 同 yum clean
+```
