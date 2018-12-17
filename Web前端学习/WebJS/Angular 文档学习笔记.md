@@ -197,7 +197,7 @@ Angular 应用是模块化的。
 
 `@NgModule()`：NgModule 装饰器；
 
-- declaration (可声明对象) - 属于本 NgModule 的组件、指令、管道。
+- declaration (可声明对象) - 声明属于本 NgModule 的组件、指令、管道。
 - import (导入模块) - 本 NgModule 导入的其他模块。
 - export (导出模块) - 本 NgModule 导出的可在其他模块的组件模板中使用的可声明对象的子集。
 - providers (服务提供商) - 模块级别的服务提供商，全局服务提供商。
@@ -362,7 +362,7 @@ export class Student  {
 
 **模板表达式**：属性绑定使用
 
-模板**表达式**产生一个值。 Angular 执行这个表达式，并把它赋值给绑定目标的属性，这个绑定目标可能是 HTML 元素、组件或指令。在插值表达式/属性绑定中常用到模板表达式。
+模板**表达式**产生一个值。Angular 执行这个表达式，并把它赋值给绑定目标的属性，这个绑定目标可能是 HTML 元素、组件或指令。在插值表达式/属性绑定中常用到模板表达式。
 
 表达式上下文就是这个组件实例。表达式中的上下文变量是由*模板变量*、*指令的上下文变量*（如果有）和*组件的成员*叠加而成的。（模板变量 > 指令上下文变量 > 组件成员变量）。
 
@@ -373,8 +373,8 @@ JavaScript 中那些具有或可能引发副作用的表达式是被禁止的：
 - 赋值 (`=`, `+=`, `-=`, ...)
 - `new` 运算符
 - 使用 `;` 或 `,` 的链式表达式
-- 自增和自减运算符：`++` 和 `--`
-- 不支持位运算 `|` 和 `&`
+- 自增和自减运算符：`++` 和 `--` 
+- 不支持位运算 `|` 和 `&` 
 
 **模板语句**：事件绑定使用
 
@@ -493,24 +493,131 @@ ngModel： 双向绑定到 HTML 表单元素。
 
 *ngSwitch：
 
-```
+```html
 <div [ngSwitch]="currentHero.emotion">
-  <app-happy-hero    *ngSwitchCase="'happy'"    [hero]="currentHero"></app-happy-hero>
-  <app-sad-hero      *ngSwitchCase="'sad'"      [hero]="currentHero"></app-sad-hero>
+  <app-happy-hero *ngSwitchCase="'happy'" [hero]="currentHero"></app-happy-hero>
+  <app-sad-hero *ngSwitchCase="'sad'" [hero]="currentHero"></app-sad-hero>
   <app-confused-hero *ngSwitchCase="'confused'" [hero]="currentHero"></app-confused-hero>
-  <app-unknown-hero  *ngSwitchDefault           [hero]="currentHero"></app-unknown-hero>
+  <app-unknown-hero *ngSwitchDefault [hero]="currentHero"></app-unknown-hero>
 </div>
 ```
 
+#### 其他语法
+
 **模板引用变量**：
 
-模板引用变量（#var）：通常用来引用模板中的某个 DOM 元素。
+模板引用变量（`#var` / `ref-var`）：通常用来引用模板中的某个 DOM 元素。
 
+示例：
 
+```
+<input #box (keyup)="onKey(box.value)">
+```
 
+**输入输出属性**：
 
+- 输入属性：带有 `@Input` 装饰器的可设置属性。通过属性绑定的方式使值流入属性。
+- 输出属性：带有 `@Output` 装饰器的可设置属性。通过事件绑定的方式使值流出属性。
 
+> 外部组件应该只能绑定到组件的公共（允许绑定） API 上。
+>
+> TypeScript 的 `public` 是没用的。
 
+1、直接声明输入输出属性：
 
+```ts
+@Input('alias')  hero: Hero;
+@Output() deleteRequest = new EventEmitter<Hero>();
+```
 
+指定别名：
+
+```ts
+@Input('alias') propName = ...
+```
+
+2、在元数据中声明输入输出属性：
+
+```ts
+@Component({
+  inputs: ['hero'],
+  outputs: ['deleteRequest'],
+})
+```
+
+指定别名：`'prop:alias'` 
+
+```ts
+@Component({
+  inputs: ['hero:myHero'],
+  outputs: ['clicks:myClick'],
+})
+```
+
+**模板表达式操作符**：
+
+- 管道操作符 (`|`) ：数据转换。
+
+- 安全导航操作符 (`?.`) ：在属性路径中出现 null 和 undefined 值时，保护视图渲染器，让它免于失败。如 `{{nullHero?.name}}`。
+
+- 非空断言操作符 (`!`) ：防止 TypeScript 报告属性可能为 null 或 undefined"的错误，不做严格测试。
+
+- 类型转换函数 （`$any()`）：使用 `$any()` 将表达式转换为 any 类型。
+
+### 生命周期钩子
+
+每个组件都有一个被 Angular 管理的生命周期。Angular 提供了**生命周期钩子**，把这些关键生命时刻暴露出来，赋予你在它们发生时采取行动的能力。
+
+1.`ngOnChanges()`：当 Angular (重新) 设置数据绑定输入属性时相应。
+
+2.`ngOnInit()`：在 Angular 第一次显示数据绑定和设置指令/组件的输入属性之后，初始化指令/组件。在第一轮 `ngOnChanges()` 完成之后调用，只调用**一次**。
+
+3.`ngDoCheck()`：检测，并在发生 Angular 无法或不愿意自己检测的变化时作出反应。在每个 Angular 变更检测周期中调用，`ngOnChanges()` 和 `ngOnInit()` 之后。
+
+4.`ngAfterContentInit()`：当把内容投影进组件之后调用。第一次 `ngDoCheck()` 之后调用，只调用一次。
+
+5.`ngAfterContentChecked()`：每次完成被投影组件内容的变更检测之后调用。`ngAfterContentInit()` 和每次 `ngDoCheck()` 之后调用
+
+6.`ngAfterViewInit()`：初始化完组件视图及其子视图之后调用。
+
+第一次 `ngAfterContentChecked()` 之后调用，只调用一次。
+
+7.`ngAfterViewChecked()`：每次做完组件视图和子视图的变更检测之后调用。`ngAfterViewInit()` 和每次 `ngAfterContentChecked()` 之后调用。
+
+8.`ngOnDestroy()`：当 Angular 每次销毁指令/组件之前调用并清扫。 在这儿反订阅可观察对象和分离事件处理器，以防内存泄漏。在 Angular 销毁指令/组件之前调用。
+
+> 不要在组件的构造函数中获取数据，`ngOnInit()` 是组件获取初始数据的好地方。
+>
+
+### 组件交互
+
+**通过输入型属性绑定把数据从父组件传到子组件**：
+
+```ts
+@Input() hero: Hero;
+```
+
+**通过 setter 拦截监听输入属性值的变化**：
+
+```ts
+@Input()
+set name(name: string) {
+  this._name = (name && name.trim()) || '<no name set>';
+}
+get name(): string { return this._name; }
+```
+
+**父组件监听子组件的事件**。
+
+**父组件与子组件通过本地变量互动**：
+
+在父组件模板中新建一个本地变量 (模板引用变量) 来代表子组件，利用这个变量读取子组件的属性和调用子组件的方法。
+
+**父组件调用 `@ViewChild()`** ：
+
+如果父组件的*类*需要读取子组件的属性值或调用子组件的方法，可以把子组件作为 *ViewChild*，**注入**到父组件里面。
+
+**父组件与子组件通过服务通讯**：
+
+父组件和它的子组件共享同一个服务，利用该服务*在家庭内部*实现双向通讯。
 
