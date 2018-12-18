@@ -1,3 +1,22 @@
+
+
+### prodmp 标签DMP平台
+
+完成了：
+
+- 使用 Angular Material 为趋势图添加日期范围组件。
+- 使用 Apache POI 实现趋势数据导出为 Excel 表的功能。
+- 基于 cookie 实现记住密码功能。
+
+学习了：
+
+- 学习了 Angular Material UI框架
+- 学习了 Apache POI 生成 Excel 文件。
+- 学习了 Angular 文件下载。
+- 学习了 Cookie 与加密解密。
+
+> √：Angular Material，Apache POI，文件下载。
+
 ### AppInfo 爬虫
 
 完成了：
@@ -8,29 +27,12 @@
 学习了：
 
 - 学习了 WebMagic 爬虫框架。
-
 - 学习了 Linux 基本操作。
 - 学习了 shell 脚本编写。
 
 > √：WebMagic，linux，shell。
 >
 > ×：Python，Shell。
-
-### prodmp 标签DMP平台
-
-完成了：
-
-- 使用 Angular Material 为趋势图添加日期范围组件。
-- 使用 Apache POI 实现趋势数据导出为 Excel 表的功能。
-
-学习了：
-
-- 学习了 Angular Material UI框架
-- 学习了 Apache POI 生成 Excel 文件。
-- 学习了 Angular 文件下载。
-
-> √：Angular Material，Apache POI，文件下载。
-
 
 ### admin - 企业管理
 
