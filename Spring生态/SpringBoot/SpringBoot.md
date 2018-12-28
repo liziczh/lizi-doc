@@ -1,12 +1,22 @@
-### JPA
+# SpringBoot
+
+Spring 脚手架：
+
+config：@Configuration，@Bean
+
+JPA：@Entity，@Repository
+
+REST：@RestController，@GetMapping()，@PostMapping()，@PutMapping()，@DeleteMapping()。
+
+定时任务：@EnableScheduling，@Scheduled()。
+
+## JPA
 
 **Entity 配置** 
 
 `@Entity` - 标注实体
 
 `@Table(name = "table_name")` - 标注数据表
-
-
 
 **Spring JpaRepository** 
 

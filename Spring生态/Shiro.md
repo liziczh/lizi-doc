@@ -1,4 +1,4 @@
-Apache Shiro
+## Apache Shiro
 
 Java安全框架，Shiro 可以帮助我们完成：认证、授权、加密、会话管理、与 Web 集成、缓存等。
 
@@ -11,6 +11,8 @@ Java安全框架，Shiro 可以帮助我们完成：认证、授权、加密、�
 **Realm**：用户的信息认证器和用户的权限认证器，我们需要自己来实现Realm来自定义的管理我们自己系统内部的权限规则。Realm 实质是 DAO。
 
 #### Shiro 基本功能
+
+![](/img/shiro.png)
 
 **Authentication**：身份认证 / 登录，验证用户是不是拥有相应的身份；
 

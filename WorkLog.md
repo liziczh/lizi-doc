@@ -1,4 +1,18 @@
+### QuestMobile官网
 
+IP访问次数限制
+
+### admin - 报告管理
+
+完成了：
+
+- 基于 cookie 实现记住密码功能。
+- 已发报告&未发报告的前端页面编写。
+- 文件上传表单组件。
+
+学习了：
+
+- 学习了文件上传表单组件。
 
 ### prodmp 标签DMP平台
 
@@ -17,7 +31,7 @@
 
 > √：Angular Material，Apache POI，文件下载。
 
-### AppInfo 爬虫
+### appInfo 爬虫
 
 完成了：
 
