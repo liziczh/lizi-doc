@@ -1,6 +1,17 @@
-### QuestMobile官网
+### website - 官网
 
-IP访问次数限制
+完成了：
+
+- 每个IP一分钟只允许提交两次，
+- 每个IP每次提交内容与上一次提交内容做一次MD5对比校验，如果相同，则直接返回。
+
+学习了：
+
+- 学习了 localStorage。
+
+> √：localStorage。
+>
+> +：IP 检测，StorageUtils。
 
 ### admin - 报告管理
 
@@ -8,11 +19,15 @@ IP访问次数限制
 
 - 基于 cookie 实现记住密码功能。
 - 已发报告&未发报告的前端页面编写。
-- 文件上传表单组件。
+- 复选框排列，文件上传表单组件。
 
 学习了：
 
+- 学习了 ng-cookie-service，ts-md5
 - 学习了文件上传表单组件。
+
+> √：文件上传。
+>
 
 ### prodmp 标签DMP平台
 
@@ -30,6 +45,8 @@ IP访问次数限制
 - 学习了 Cookie 与加密解密。
 
 > √：Angular Material，Apache POI，文件下载。
+>
+> +：权限管理，jwt。
 
 ### appInfo 爬虫
 
@@ -46,7 +63,7 @@ IP访问次数限制
 
 > √：WebMagic，linux，shell。
 >
-> ×：Python，Shell。
+> +：Python，Shell。
 
 ### admin - 企业管理
 
