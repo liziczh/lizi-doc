@@ -2,16 +2,17 @@
 
 完成了：
 
-- 每个IP一分钟只允许提交两次，
-- 每个IP每次提交内容与上一次提交内容做一次MD5对比校验，如果相同，则直接返回。
+- 每个 IP 一分钟只允许提交两次。
+- 每个 IP 每次提交内容与上一次提交内容做一次 MD5 对比校验，如果相同，则直接返回。
 
 学习了：
 
 - 学习了 localStorage。
+- 学习了 redisTemplate。
 
 > √：localStorage。
 >
-> +：IP 检测，StorageUtils。
+> +：IP 检测，StorageUtils，redisTemplate。
 
 ### admin - 报告管理
 
@@ -19,15 +20,18 @@
 
 - 基于 cookie 实现记住密码功能。
 - 已发报告&未发报告的前端页面编写。
-- 复选框排列，文件上传表单组件。
+- 表单验证，复选框，文件上传组件。
 
 学习了：
 
-- 学习了 ng-cookie-service，ts-md5
+- 学习了 ng-cookie-service，ts-md5。
 - 学习了文件上传表单组件。
 
-> √：文件上传。
+> √：cookie，ts-md5，Angular 子组件，checkbox 初始化与值流出。
 >
+> +：文件上传。
+
+※ 表单验证：输入规则提示，输入错误提示，表单提交参数校验弹窗。
 
 ### prodmp 标签DMP平台
 

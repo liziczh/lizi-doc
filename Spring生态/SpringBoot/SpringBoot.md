@@ -47,5 +47,11 @@ public interface JpaRepository<T, ID extends Serializable> extends PagingAndSort
 }
 ```
 
+spring-boot-starter-jdbc：DataSourceTransactionManager。
 
+spring-boot-starter-data-jpa：JpaTransactionManager。
+
+@EnableTransactionManagement：启用事务管理。
+
+@Transactional：发生异常，直接回滚。
 
