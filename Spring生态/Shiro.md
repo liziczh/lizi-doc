@@ -2,6 +2,8 @@
 
 Java安全框架，Shiro 可以帮助我们完成：认证、授权、加密、会话管理、与 Web 集成、缓存等。
 
+**Shiro本质上就是通过 Filter 对 URL 进行拦截过滤。**
+
 #### Shiro 三大核心组件
 
 **Subject**：主体，即"当前用户"。Subject 不仅仅指"当前用户"，与当前应用交互的任何东西都是 Subject。所有的 Subject 都要绑定到 SecurityManager 上，与 Subject 的交互实际上是被转换为与 SecurityManager 的交互。
@@ -44,3 +46,10 @@ Java安全框架，Shiro 可以帮助我们完成：认证、授权、加密、�
     <artifactId>shiro-core</artifactId>
 </dependency>
 ```
+
+#### 传统 Web 项目中的权限管理
+
+ShiroConfig：配置 Filter 拦截的 URL。
+
+CustomShiroRealm：重写授权(doGetAuthorizationInfo)和认证(doGetAuthenticationInfo)方法。
+
