@@ -47,9 +47,11 @@ Java安全框架，Shiro 可以帮助我们完成：认证、授权、加密、�
 </dependency>
 ```
 
-#### 传统 Web 项目中的权限管理
+#### Shiro 身份验证
 
-ShiroConfig：配置 Filter 拦截的 URL。
+**身份验证（Authentication）**：用户提供**身份**（principal）和**证明**（credemtials）给shiro，从而验证用户身份。
 
-CustomShiroRealm：重写授权(doGetAuthorizationInfo)和认证(doGetAuthenticationInfo)方法。
+**principal**：身份，如用户名 / 邮箱等。
+
+**credemtials**：证明，如密码 / 数字证书等。
 
