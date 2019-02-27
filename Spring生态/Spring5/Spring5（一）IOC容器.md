@@ -86,7 +86,7 @@ c）实例工厂方法实例化
 
 #### 依赖注入
 
-基于**构造函数**的依赖注入：
+1.基于**构造函数**的依赖注入：
 
 a）使用type属性指定构造参数类型：
 
@@ -117,7 +117,7 @@ c）使用 name 属性匹配参数名称：
 
 > @ConstructorProperties({height}, {firstName})：显示声明构造函数名称。
 
-基于**setter方法**的依赖注入：
+2.基于**setter方法**的依赖注入：
 
 ```xml
 <bean id="exampleBean" class="example.exampleBean">
@@ -126,7 +126,7 @@ c）使用 name 属性匹配参数名称：
 </bean>
 ```
 
-其他注入：
+注入示例：
 
 a）内部类注入：内部类不需要指定 id 或者 name。
 
@@ -175,13 +175,51 @@ c）properties 注入：
 </bean>
 ```
 
-d）null 值注入：
+d）null 值与空值：`<null/>` 和 `""` 
 
 ```xml
 <bean id="exampleBean" class="example.exampleBean">
+    <!--null值-->
 	<property name="email">
 		<null/>
 	</property>
+    <!--空值-->
+    <property name="mobile" value="" />
 </bean>
 ```
+
+e） 使用 p 命名空间简化 XML 配置。
+
+f）使用 c 命名空间简化XML配置。
+
+g）组合属性名：
+
+```xml
+<!--exampleBean 有 a 属性，a 属性有 b 属性，b 属性有 c 属性。-->
+<bean id="exampleBean" class="example.exampleBean">
+    <property name="a.b.c" value="123" />
+</bean>
+```
+
+> exampleBean 有 a 属性，a 属性有 b 属性，b 属性有 c 属性。
+
+注入属性：
+
+h）depends-on 属性：强迫所依赖的 bean 在引用之前进行初始化。
+
+```XML
+<bean id="exampleBean" class="ExampleBean" depends-on="manager, account"/>
+<bean id="manager" class="ManagerBean"/>
+<bean id="account" class="AccountBean"/>
+```
+
+g）lazy-init 属性：延迟初始化，bean 会通知 IoC 不要让 bean 预初始化而是在被引用的时候才会实例化。
+
+```xml
+<bean id="exampleBean" class="com.foo.ExampleBean" lazy-init="true"/>
+```
+
+
+
+自动注入
 

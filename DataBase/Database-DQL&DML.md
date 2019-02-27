@@ -139,8 +139,8 @@ ORDER BY <排序列> [ASC|DESC]
 | `MIN([DISTINCT]<列名>)`   | 求列值最小值   |
 
 > 注意：
-> ①只有COUNT(*)计算空值，其余聚集函数都跳过空值。
-> ②WHERE 子句中不能用聚集函数，聚集函数只能用于 SELECT 子句和 GROUP BY 中的 HAVING 子句。
+> ① 只有COUNT(*)计算空值，其余聚集函数都跳过空值。
+> ② WHERE 子句中不能用聚集函数，聚集函数只能用于 SELECT 子句和 GROUP BY 中的 HAVING 子句。
 
 #### 1.1.5 分组查询：GROUP BY
 
