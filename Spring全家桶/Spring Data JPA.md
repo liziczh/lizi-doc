@@ -1,16 +1,4 @@
-# SpringBoot
-
-Spring 脚手架：
-
-config：@Configuration，@Bean
-
-JPA：@Entity，@Repository
-
-REST：@RestController，@GetMapping()，@PostMapping()，@PutMapping()，@DeleteMapping()。
-
-定时任务：@EnableScheduling，@Scheduled()。
-
-## JPA
+## Spring Data JPA
 
 **Entity 配置** 
 
