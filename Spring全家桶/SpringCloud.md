@@ -34,6 +34,8 @@ Spring Cloud Consul：分布式服务配置与注册中心。
 
 服务调用：Fegin。
 
+负载均衡：Ribbon。
+
 配置中心：Config。
 
 服务网关：Gateway。
