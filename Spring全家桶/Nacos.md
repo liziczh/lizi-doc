@@ -144,3 +144,4 @@ spring:
 - B：通过 `spring.cloud.nacos.config.ext-config[n].data-id` 的方式支持多个扩展 Data Id 的配置，n越小加载优先级越高。
 - C： 通过内部相关规则(应用名、应用名+ Profile )自动生成相关的 Data Id 配置。
 
+> GitHub：https://github.com/liziczh/lizi-nacos/tree/master/nacos-config 
