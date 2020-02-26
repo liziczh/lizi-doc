@@ -8,9 +8,13 @@ Nacos 可作为注册中心和配置中心。
 ./startup.sh -m standalone
 ```
 
-访问地址：
+Console：http://127.0.0.1:8848/nacos/index.html
 
-http://127.0.0.1:8848/nacos/index.html
+
+
+#### Nacos 注册中心
+
+
 
 #### Nacos 配置中心
 
@@ -25,6 +29,8 @@ http://127.0.0.1:8848/nacos/index.html
 ```
 
 创建配置文件： `bootstrap.yml` 或  `bootstrap.properties`。
+
+> ※ 配置文件命名必须为bootstrap。
 
 ```yml
 server:
@@ -98,6 +104,8 @@ spring:
           refresh: true # 配置文件是否支持自动刷新，默认不支持
 ```
 
+> 可加载不同 Group 下的配置文件。
+
 **共享配置 shared-dataids**：
 
 ```yml
@@ -136,6 +144,8 @@ spring:
         refreshable-dataids: global.yml,common.yml # 共享配置开启动态刷新，使用","分割。
 ```
 
+> 只能加载同一 Group 下的配置文件。
+>
 > ？config或ext-config 指定 group 后，共享配置无法正常加载。
 
 **Nacos 配置加载优先级**： A < B < C，后加载配置覆盖前加载配置。 
@@ -144,4 +154,4 @@ spring:
 - B：通过 `spring.cloud.nacos.config.ext-config[n].data-id` 的方式支持多个扩展 Data Id 的配置，n越小加载优先级越高。
 - C： 通过内部相关规则(应用名、应用名+ Profile )自动生成相关的 Data Id 配置。
 
-> GitHub：https://github.com/liziczh/lizi-nacos/tree/master/nacos-config 
+> 相关源码：https://github.com/liziczh/lizi-nacos/tree/master/nacos-config 
