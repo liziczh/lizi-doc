@@ -1,16 +1,15 @@
 ### Nacos
 
-Nacos 可作为注册中心和配置中心。
+Nacos（ Dynamic Naming and Configuration Service ）可作为服务注册中心和配置中心。
+
+下载Nacos-server： https://github.com/alibaba/nacos/releases 
 
 单点启动：
 
-```linux
-./startup.sh -m standalone
-```
+- linux：`sh startup.sh -m standalone` 
+- windows：`cmd startup.cmd` 
 
 Console：http://127.0.0.1:8848/nacos/index.html
-
-
 
 #### Nacos 注册中心
 
@@ -122,6 +121,10 @@ public class NacosDiscoveryConsumerController {
 	}
 }
 ```
+
+##### 服务注册策略
+
+Nacos 服务注册策略：每5s向nacos-server发送一次心跳（携带服务名、服务IP和端口等）， 同时nacos-server会向client发起健康检查，支持tcp/http检查，如果15s内无心跳且健康检查失败，则认为实例不健康。如果30秒内健康检查失败则剔除实例。 
 
 #### Nacos 配置中心
 
@@ -261,4 +264,4 @@ spring:
 - B：通过 `spring.cloud.nacos.config.ext-config[n].data-id` 的方式支持多个扩展 Data Id 的配置，n越小加载优先级越高。
 - C： 通过内部相关规则(应用名、应用名+ Profile )自动生成相关的 Data Id 配置。
 
-> 相关源码：https://github.com/liziczh/lizi-nacos/tree/master/nacos-config 
+> 相关源码：https://github.com/liziczh/lizi-nacos/
