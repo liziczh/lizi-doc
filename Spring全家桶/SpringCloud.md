@@ -173,7 +173,7 @@ eureka:
     lease-expiration-duration-in-seconds: 90 # 发呆时间，即服务续约到期时间（缺省为90s）
   client:
     service-url:
-      default-zone: http://localhost:8761/eureka/
+      defaultZone: http://localhost:8761/eureka/
 ```
 
 启用EurekaClient
@@ -193,7 +193,6 @@ Service Provider：
 ```java
 @RestController
 public class EurekaServiceProviderController {
-
 	@GetMapping(value = "/out/{value}")
 	public String provide(@PathVariable String value){
 		return "EurekaServiceProvider::" + value;
@@ -201,7 +200,7 @@ public class EurekaServiceProviderController {
 }
 ```
 
-Service Provider：
+Service Consumer：
 
 ```java
 @RestController
@@ -223,52 +222,218 @@ public class EurekaServiceConsumerController {
 }
 ```
 
-### 集群配置
+### Eureka 集群配置
 
 集群：将注册中心分别指向其它注册中心。 
 
 ```yaml
+# application-peer1.yml
 server:
   port: 8001
 spring:
   application:
     name: eureka-server
-  profiles: peer1
+  profiles:
+    active: peer1
 eureka:
   instance:
-    hostname: peer1
+    hostname: localhost
   client:
     service-url:
-      default-zone: http://peer2:8002/eureka/,http://peer3:8003/eureka/
----
- server:
+      defaultZone: http://localhost:8002/eureka/,http://localhost:8003/eureka/
+```
+
+```yaml
+# application-peer2.yml
+server:
   port: 8002
 spring:
   application:
     name: eureka-server
-  profiles: peer2
+  profiles:
+    active: peer2
 eureka:
   instance:
-    hostname: peer2
+    hostname: localhost
   client:
     service-url:
-      default-zone: http://peer1:8001/eureka/,http://peer3:8003/eureka/
----
- server:
+      defaultZone: http://localhost:8001/eureka/,http://localhost:8003/eureka/
+```
+
+```yaml
+# application-peer3.yml
+server:
   port: 8003
 spring:
   application:
     name: eureka-server
-  profiles: peer3
+  profiles:
+    active: peer3
 eureka:
   instance:
-    hostname: peer3
+    hostname: localhost
   client:
     service-url:
-      default-zone: http://peer1:8001/eureka/,http://peer2:8002/eureka/
+      defaultZone: http://localhost:8001/eureka/,http://localhost:8002/eureka/
 ```
 
+## Feign
 
+Feign：服务调用。
+
+ServiceConsumer引入maven依赖：
+
+```xml
+<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-starter-openfeign</artifactId>
+</dependency>
+```
+
+FeignClient配置文件：
+
+```yaml
+feign:
+  client:
+    config:
+      default:
+        connect-timeout: 10000
+```
+
+**FeginService**：
+
+```java
+@Component
+@FeignClient(name = "EUREKA-SERVICE-PROVIDER")
+public interface FeignService {
+	@GetMapping(value = "/out/{value}")
+	String provide(@PathVariable String value);
+}
+```
+
+> 默认情况下，feign只能通过@RequestBody传对象参数，建议service-provider将为浏览器服务的Controller和为消费者服务的Controller分开。
+
+FeignClient注解属性：
+
+- name：服务名称，同value。
+
+- value：服务名称，同name。
+
+- path： 类似于requestMapping。
+-  fallback：熔断机制，调用失败时的回调方法。底层依赖hystrix，@EnableHystrix。
+
+### Feign原理
+
+扫包@FeignClient注解类，注入IOC容器。
+
+feign接口被调用时，通过JDK动态代理生成RequestTemplate（包含请求参数、url等），RequestTemplate生成Request交给client处理。client默认为 HTTPUrlConnection，也可以是OKhttp、Apache的HTTPClient等。
+
+最后client封装成LoadBaLanceClient，结合Ribbon负载均衡地发起调用。 
+
+
+
+## Ribbon
+
+Ribbon：负载均衡
+
+ServiceProvider引入maven依赖：
+
+```xml
+<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
+	<version>2.2.1.RELEASE</version>
+</dependency>
+```
+
+RibbonConfig.java
+
+```java
+@Configuration
+public class RibbonConfig {
+	@Bean
+	public IRule ribbonRule(){
+		return new RandomRule(); // 随机选择一个server。
+//		return new BestAvailableRule(); // 逐个检查，选择并发请求最小的server。
+//		return new RoundRobinRule(); // 轮询选择server。
+//		return new WeightedResponseTimeRule(); // 根据响应时间分配权重，权重选择。
+//		return new ZoneAvoidanceRule(); // 根据server性能和server可用性选择。
+//		return new RetryRule(); // 对选定的负载均衡策略机上重试机制，在一个配置时间段内当选择server不成功，则一直尝试使用subRule的方式选择一个可用的server
+	}
+
+	@Bean
+	public IPing ribbonPing(){
+		return new PingUrl();
+	}
+
+	@Bean
+	public ServerListSubsetFilter serverListSubsetFilter(){
+		ServerListSubsetFilter filter = new ServerListSubsetFilter();
+		return filter;
+	}
+}
+```
+
+ServiceProvider添加注解@RibbonClient
+
+```java
+@EnableEurekaClient
+@RibbonClient(name = "RibbonClient", configuration = RibbonConfig.class)
+@SpringBootApplication
+public class EurekaServiceProviderApplication {
+	public static void main(String[] args) {
+		SpringApplication.run(EurekaServiceProviderApplication.class, args);
+	}
+}
+```
+
+ServiceProvider：
+
+```java
+@RestController
+@RequestMapping(value = "/ribbon/")
+public class RibbonController {
+	@Value("${spring.application.name}")
+	private String appName;
+	@Value("${server.port}")
+	private String port;
+	/**
+	 * Ribbon负载均衡测试接口
+	 * @return
+	 */
+	@GetMapping(value = "port")
+	public String ribbon(){
+		return appName + "::" + port;
+	}
+}
+```
+
+ServiceConsumer：
+
+```java
+@Component
+@FeignClient(name = "EUREKA-SERVICE-PROVIDER")
+public interface ProviderFeignService {
+	@GetMapping(value = "/ribbon/port")
+	String ribbon();
+}
+```
+
+```java
+@RestController
+@RequestMapping(value = "/feign/")
+public class FeignTestController {
+	@Autowired
+	private ProviderFeignService providerFeignService;
+	
+	@GetMapping(value = "port")
+	public String port(){
+		return providerFeignService.ribbon();
+	}
+}
+```
+
+ServiceProvider启动两个段端口不同的实例，ServiceConsumer调用，可以看到每次调用port值不同。
 
 ## Hystrix 熔断器
 
@@ -288,20 +453,7 @@ Config Server：
 配置文件（Server）：
 
 ```yaml
-server:
-server:
-  port: 8001
-spring:
-  application:
-    name: spring-cloud-config-server
-  cloud:
-    config:
-      server:
-        git:
-          uri: https://github.com/ityouknow/spring-cloud-starter/  # 配置git仓库的地址
-          search-paths: config-repo     # git仓库地址下的相对地址，可以配置多个，用,分割。
-          username: username            # git仓库的账号
-          password: password            # git仓库的密码
+
 ```
 
 Config Client：

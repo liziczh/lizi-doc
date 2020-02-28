@@ -30,3 +30,16 @@ WAR包是web应用程序，直接将war包放入Tomcat的webapps目录下，启�
     |- lib
         |- 依赖Jar包
 ```
+
+**sign算法**：
+
+1.客户端已知参数：appKey，**appSercret**，timestamp，param1，value1，param2，value2...
+
+2.通过key&secret生成签名：sign=md5(appKey&appSercret&param1=value1&param2=value2&timestamp)
+
+3.客户端发送请求传参：appKey，timestamp，sign，param1，value1，param2，value2...
+
+4.服务端根据appKey匹配相应的appSercret，根据相同的规则生成签名sign校验一致性。
+
+5.服务端查询redis是否已存在该sign，若已存在，则拒绝请求；若不存在，则缓存sign一段时间。
+
