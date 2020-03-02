@@ -42,7 +42,7 @@ Spring Cloud Consul：分布式服务配置与注册中心。
 
 
 
-## Eureka
+## Eureka 服务注册
 
 Eureka，服务中心 / 注册中心，管理各种服务功能包括服务的注册、发现、熔断、负载、降级等。
 
@@ -192,8 +192,9 @@ Service Provider：
 
 ```java
 @RestController
+@RequestMapping(value = "/provide/")
 public class EurekaServiceProviderController {
-	@GetMapping(value = "/out/{value}")
+	@GetMapping(value = "out/{value}")
 	public String provide(@PathVariable String value){
 		return "EurekaServiceProvider::" + value;
 	}
@@ -204,6 +205,7 @@ Service Consumer：
 
 ```java
 @RestController
+@RequestMapping(value = "/consume/")
 public class EurekaServiceConsumerController {
 	@Bean
 	@LoadBalanced
@@ -214,9 +216,9 @@ public class EurekaServiceConsumerController {
 	@Autowired
 	private RestTemplate restTemplate;
 
-	@GetMapping(value = "/get/{value}")
+	@GetMapping(value = "get/{value}")
 	public String get(@PathVariable String value){
-		String url = "http://eureka-service-provider:8001/out/"+value;
+		String url = "http://eureka-service-provider:8081/provide/out/"+value;
 		return restTemplate.getForObject(url, String.class);
 	}
 }
@@ -277,7 +279,7 @@ eureka:
       defaultZone: http://localhost:8001/eureka/,http://localhost:8002/eureka/
 ```
 
-## Feign
+## Feign 远程调用
 
 Feign：服务调用。
 
@@ -300,7 +302,7 @@ feign:
         connect-timeout: 10000
 ```
 
-**FeginService**：
+**FeginClient**：
 
 ```java
 @Component
@@ -330,11 +332,9 @@ feign接口被调用时，通过JDK动态代理生成RequestTemplate（包含请
 
 最后client封装成LoadBaLanceClient，结合Ribbon负载均衡地发起调用。 
 
+## Ribbon 负载均衡
 
-
-## Ribbon
-
-Ribbon：负载均衡
+Ribbon：服务端负载均衡
 
 ServiceProvider引入maven依赖：
 
@@ -346,7 +346,7 @@ ServiceProvider引入maven依赖：
 </dependency>
 ```
 
-RibbonConfig.java
+Ribbon配置类：
 
 ```java
 @Configuration
@@ -374,7 +374,7 @@ public class RibbonConfig {
 }
 ```
 
-ServiceProvider添加注解@RibbonClient
+ServiceProvider添加注解@RibbonClient：
 
 ```java
 @EnableEurekaClient
@@ -387,7 +387,7 @@ public class EurekaServiceProviderApplication {
 }
 ```
 
-ServiceProvider：
+ServiceProvider测试：
 
 ```java
 @RestController
@@ -397,10 +397,7 @@ public class RibbonController {
 	private String appName;
 	@Value("${server.port}")
 	private String port;
-	/**
-	 * Ribbon负载均衡测试接口
-	 * @return
-	 */
+	
 	@GetMapping(value = "port")
 	public String ribbon(){
 		return appName + "::" + port;
@@ -408,71 +405,69 @@ public class RibbonController {
 }
 ```
 
-ServiceConsumer：
+ServiceConsumer测试：
 
 ```java
 @Component
 @FeignClient(name = "EUREKA-SERVICE-PROVIDER")
-public interface ProviderFeignService {
+public interface ProviderFeignClient {
 	@GetMapping(value = "/ribbon/port")
 	String ribbon();
 }
 ```
 
+ServiceProvider启动两个段端口不同的实例，ServiceConsumer调用，可以看到每次调用port值不同。
+
+## Hystrix 熔断机制
+
+熔断器：消费端监控服务故障，连续多次失败调用通过Fallback进行熔断保护。
+
+ServiceConsumer引入Maven依赖：
+
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+    <version>2.2.1.RELEASE</version>
+</dependency>
+```
+
+ServiceConsumer配置文件：
+
+```yaml
+feign:
+  hystrix:
+    enabled: true
+```
+
+FeignClient：
+
 ```java
-@RestController
-@RequestMapping(value = "/feign/")
-public class FeignTestController {
-	@Autowired
-	private ProviderFeignService providerFeignService;
-	
-	@GetMapping(value = "port")
-	public String port(){
-		return providerFeignService.ribbon();
+@Component
+@FeignClient(name = "EUREKA-SERVICE-PROVIDER", fallback = ProviderFeignClientFallback.class)
+public interface ProviderFeignClient {
+	@GetMapping(value = "/provide/out/{value}")
+	String provide(@PathVariable String value);
+
+	@GetMapping(value = "/ribbon/port")
+	String ribbon();
+}
+```
+
+FeignClienFallback：
+
+```java
+@Component
+public class ProviderFeignClientFallback implements ProviderFeignClient {
+	@Override
+	public String provide(String value) {
+		return "Out Error";
+	}
+	@Override
+	public String ribbon() {
+		return "Port Error";
 	}
 }
 ```
 
-ServiceProvider启动两个段端口不同的实例，ServiceConsumer调用，可以看到每次调用port值不同。
-
-## Hystrix 熔断器
-
-熔断器原理：快速失败。
-
-```
-feign.hystrix.enabled=true
-```
-
-Config Server：
-
-```
-@EnableDiscoveryClient
-@EnableConfigServer
-```
-
-配置文件（Server）：
-
-```yaml
-
-```
-
-Config Client：
-
-```
-@EnableDiscoveryClient
-```
-
-配置文件（client）：
-
-```properties
-spring.application.name=spring-cloud-config-client
-server.port=8002
-
-spring.cloud.config.name=neo-config
-spring.cloud.config.profile=dev
-spring.cloud.config.label=master
-spring.cloud.config.discovery.enabled=true
-spring.cloud.config.discovery.serviceId=spring-cloud-config-server
-
-eureka.client.serviceUrl.defaultZone=http://localhost:8000/eureka/
-```
+## Config 统一配置
