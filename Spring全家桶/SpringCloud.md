@@ -55,7 +55,7 @@ Eureka，服务中心 / 注册中心，管理各种服务功能包括服务的�
 	<dependency>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
-		<version>2.2.1.RELEASE</version>
+        <version>2.2.1.RELEASE</version>
 	</dependency>
 	<dependency>
 		<groupId>org.springframework.boot</groupId>
@@ -84,7 +84,7 @@ Eureka，服务中心 / 注册中心，管理各种服务功能包括服务的�
 
 > 注意springboot和springcloud的版本对应关系，本处使用的是Springboot parent 2.2.4 和 SpringCloud Hoxton.SR1。
 
-Eureka Server 配置：
+EurekaServer 配置：`application.yml`  
 
 ```yaml
 server:
@@ -95,17 +95,21 @@ spring:
 eureka:
   instance:
     hostname: localhost
-  server:
-    enable-self-preservation: false # 是否开启自我保护模式，默认为true
-    eviction-interval-timer-in-ms: 10000 # 续期时间，即扫描失效服务的间隔时间（缺省值为60*1000ms）
   client:
-    register-with-eureka: false # 是否将自己作为client注册到eureka-server，默认为true
-    fetch-registry: false # 是否拉取eureka注册信息，默认为true
     service-url:
-      default-zone: http://${eureka.instance.hostname}:${server.port}/eureka/
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+    # 是否将自己作为client注册到eureka-server，默认为true
+    register-with-eureka: true
+    # 是否拉取eureka注册信息，默认为true
+    fetch-registry: false
+  server:
+    # 是否开启自我保护模式，默认为true
+    enable-self-preservation: false
+    # 续期时间，即扫描失效服务的间隔时间（缺省值为60*1000ms）
+    eviction-interval-timer-in-ms: 10000
 ```
 
-启用EurekaServer
+SpringBootApplication：启用EurekaServer
 
 ```java
 @SpringBootApplication
@@ -116,6 +120,8 @@ public class EurekaServerApplication {
 	}
 }
 ```
+
+启动EurekaServer服务，访问 http://localhost:8761/。
 
 ### Service
 
@@ -168,15 +174,19 @@ spring:
 eureka:
   instance:
     instance-id: ${spring.application.name}:${server.port}
-    prefer-ip-address: true # 设置微服务调用地址为IP优先
-    lease-renewal-interval-in-seconds: 30 # 心跳时间，即服务续约间隔时间，缺省值为30s
-    lease-expiration-duration-in-seconds: 90 # 发呆时间，即服务续约到期时间（缺省为90s）
+    # 设置微服务调用地址为IP优先
+    prefer-ip-address: true
+    # 心跳时间，即服务续约间隔时间，缺省值为30s
+    lease-renewal-interval-in-seconds: 30
+    # 发呆时间，即服务续约到期时间（缺省为90s）
+    lease-expiration-duration-in-seconds: 90
   client:
     service-url:
+      # 单机
       defaultZone: http://localhost:8761/eureka/
 ```
 
-启用EurekaClient
+SpringBootApplication：启用EurekaClient
 
 ```java
 @SpringBootApplication
@@ -188,20 +198,24 @@ public class EurekaServiceProviderApplication {
 }
 ```
 
-Service Provider：
+Service Provider Controller 提供服务：
 
 ```java
 @RestController
 @RequestMapping(value = "/provide/")
 public class EurekaServiceProviderController {
-	@GetMapping(value = "out/{value}")
-	public String provide(@PathVariable String value){
-		return "EurekaServiceProvider::" + value;
+    @GetMapping(value = "hello")
+	public String hello(){
+		return "Hello! I'm " + appName + ", My port is " + port;
+	}
+	@GetMapping(value = "name/{name}")
+	public String name(@PathVariable String name){
+		return "Hello! My name is " + name;
 	}
 }
 ```
 
-Service Consumer：
+Service Consumer Controller 消费服务：
 
 ```java
 @RestController
@@ -215,10 +229,16 @@ public class EurekaServiceConsumerController {
 
 	@Autowired
 	private RestTemplate restTemplate;
-
-	@GetMapping(value = "get/{value}")
-	public String get(@PathVariable String value){
-		String url = "http://eureka-service-provider:8081/provide/out/"+value;
+    
+    @GetMapping(value = "hello")
+	public String hello(){
+		String url = "http://eureka-service-provider:8081/provide/hello";
+		return restTemplate.getForObject(url, String.class);
+	}
+	
+	@GetMapping(value = "name/{name}")
+	public String get(@PathVariable String name){
+		String url = "http://eureka-service-provider:8081/provide/name/"+name;
 		return restTemplate.getForObject(url, String.class);
 	}
 }
@@ -279,6 +299,14 @@ eureka:
       defaultZone: http://localhost:8001/eureka/,http://localhost:8002/eureka/
 ```
 
+使用IDEA配置三个实例：
+
+```
+Program arguments: --spring.profiles.active=peer1
+Program arguments: --spring.profiles.active=peer2
+Program arguments: --spring.profiles.active=peer3
+```
+
 ## Feign 远程调用
 
 Feign：服务调用。
@@ -289,6 +317,7 @@ ServiceConsumer引入maven依赖：
 <dependency>
 	<groupId>org.springframework.cloud</groupId>
 	<artifactId>spring-cloud-starter-openfeign</artifactId>
+    <version>2.2.1.RELEASE</version>
 </dependency>
 ```
 
@@ -302,14 +331,29 @@ feign:
         connect-timeout: 10000
 ```
 
+SpringBootApplication：ServiceConsumer启用FeignClients
+
+```java
+@EnableEurekaClient
+@EnableFeignClients
+@SpringBootApplication
+public class EurekaServiceConsumerApplication {
+	public static void main(String[] args) {
+		SpringApplication.run(EurekaServiceConsumerApplication.class, args);
+	}
+}
+```
+
 **FeginClient**：
 
 ```java
 @Component
 @FeignClient(name = "EUREKA-SERVICE-PROVIDER")
 public interface FeignService {
-	@GetMapping(value = "/out/{value}")
-	String provide(@PathVariable String value);
+	@GetMapping(value = "/provide/hello")
+	String hello();
+	@GetMapping(value = "/provide/name/{name}")
+	String name(@PathVariable String name);
 }
 ```
 
@@ -374,7 +418,7 @@ public class RibbonConfig {
 }
 ```
 
-ServiceProvider添加注解@RibbonClient：
+SpringBootApplication：ServiceProvider添加注解@RibbonClient
 
 ```java
 @EnableEurekaClient
@@ -391,16 +435,16 @@ ServiceProvider测试：
 
 ```java
 @RestController
-@RequestMapping(value = "/ribbon/")
-public class RibbonController {
+@RequestMapping(value = "/provide/")
+public class EurekaServiceProviderController {
 	@Value("${spring.application.name}")
 	private String appName;
 	@Value("${server.port}")
 	private String port;
-	
-	@GetMapping(value = "port")
-	public String ribbon(){
-		return appName + "::" + port;
+
+	@GetMapping(value = "hello")
+	public String hello(){
+		return "Hello! I'm " + appName + ", My port is " + port;
 	}
 }
 ```
@@ -409,10 +453,10 @@ ServiceConsumer测试：
 
 ```java
 @Component
-@FeignClient(name = "EUREKA-SERVICE-PROVIDER")
-public interface ProviderFeignClient {
-	@GetMapping(value = "/ribbon/port")
-	String ribbon();
+@FeignClient(name = "EUREKA-SERVICE-PROVIDER", fallback = FeignServiceFallback.class)
+public interface FeignService {
+	@GetMapping(value = "/provide/hello")
+	String hello();
 }
 ```
 
@@ -444,13 +488,12 @@ FeignClient：
 
 ```java
 @Component
-@FeignClient(name = "EUREKA-SERVICE-PROVIDER", fallback = ProviderFeignClientFallback.class)
-public interface ProviderFeignClient {
-	@GetMapping(value = "/provide/out/{value}")
-	String provide(@PathVariable String value);
-
-	@GetMapping(value = "/ribbon/port")
-	String ribbon();
+@FeignClient(name = "EUREKA-SERVICE-PROVIDER", fallback = FeignServiceFallback.class)
+public interface FeignService {
+	@GetMapping(value = "/provide/hello")
+	String hello();
+	@GetMapping(value = "/provide/name/{name}")
+	String name(@PathVariable String name);
 }
 ```
 
@@ -458,16 +501,253 @@ FeignClienFallback：
 
 ```java
 @Component
-public class ProviderFeignClientFallback implements ProviderFeignClient {
+public class FeignServiceFallback implements FeignService {
 	@Override
-	public String provide(String value) {
-		return "Out Error";
+	public String name(String name) {
+		return "Name Error";
 	}
 	@Override
-	public String ribbon() {
-		return "Port Error";
+	public String hello() {
+		return "Hello Error";
 	}
 }
 ```
 
 ## Config 统一配置
+
+**ConfigServer**：
+
+引入maven依赖：
+
+```xml
+<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-config-server</artifactId>
+    <version>2.2.1.RELEASE</version>
+</dependency>
+```
+
+ConfigServer配置文件：`application.yml`  
+
+```yaml
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        git:
+          # git仓库地址
+          uri: https://github.com/liziczh/lizi-springcloud
+          # git分支
+          default-label: master
+          # 配置文件根目录
+          search-paths: springcloud-config/config
+          username: liziczh  # 公开项目，无需配置
+          password: xxxxxx   # 公开项目，无需配置
+```
+
+SpringBootApplication：
+
+```java
+@EnableConfigServer
+@SpringBootApplication
+public class ConfigServerApplication {
+	public static void main(String[] args) {
+		SpringApplication.run(ConfigServerApplication.class, args);
+	}
+}
+```
+
+**SpringCloud Config的URL与配置文件的映射关系**：
+
+```yaml
+/{application}/{profile}[/{label}]
+/{application}-{profile}.yml
+/{label}/{application}-{profile}.yml
+/{application}-{profile}.properties
+/{label}/{application}-{profile}.properties
+```
+
+启动项目，按照URL映射关系即可查看配置文件。
+
+**ConfigClient**：
+
+引入maven依赖：
+
+```xml
+<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-starter-config</artifactId>
+    <version>2.2.1.RELEASE</version>
+</dependency>
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+```
+
+ConfigClient配置文件：`bootstrap.yml` 
+
+> 注意配置文件的名称为bootstrap.yml，bootstrap比application加载早。
+
+```yaml
+spring:
+  application:
+    name: config-client
+  cloud:
+    config:
+      # 配置中心地址
+      uri: http://localhost:9001/
+      # git分支
+      label: master
+      # 配置文件的名称
+      name: config-client
+      # 获取配置的策略
+      profile: pro
+      # 配置发现
+      discovery:
+        enabled: true
+        # 指定配置中心的service-id
+        service-id: config-server
+```
+
+ConfigController：
+
+```java
+@RestController
+@RequestMapping("/config/")
+@RefreshScope
+public class SpringCloudConfigController {
+	@Value(value = "${db.username:admin}")
+	private String username;
+	@GetMapping(value = "test")
+	public String test() {
+		return "username:" + username;
+	}
+}
+```
+
+## Gateway 服务网关
+
+Route（路由）：由一个RouteID、目标URL、一组断言、一组过滤器定义。如果断言为真，则路由匹配。
+
+引入maven依赖：
+
+```xml
+<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-starter-gateway</artifactId>
+	<version>2.2.1.RELEASE</version>
+</dependency>
+```
+
+配置文件：`application.yml` 
+
+```yaml
+spring:
+  application:
+    name: gateway-service-a
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true  # 启用注册中心定位网关服务，启用后可直接使用应用名程调用服务
+      routes:
+          # 路由标识
+        - id: gateway-service-a
+          # 目标服务URL
+          uri: https://www.baidu.com
+          # 断言
+          predicates:
+            - After=2019-01-01T00:00:00+08:00[Asia/Shanghai]
+#            - Before=2049-01-01T00:00:00+08:00[Asia/Shanghai]
+#            - Between=2019-01-01T00:00:00+08:00[Asia/Shanghai], 2049-01-01T00:00:00+08:00[Asia/Shanghai]
+#            - Cookie=sessionId, test
+#            - Header=X-Request-Id, \d+
+#            - Host=**.baidu.com
+#            - Method=GET
+#            - Path=/a
+#            - Query=name
+#            - RemoteAddr=192.168.1.1/24
+#          filter:
+#            # 截取Path位数
+#            - StripPrefix=1
+```
+
+ Predicate：匹配成功跳转目标URL。
+
+1.在某个时间之后的请求都进行转发
+
+```yaml
+- After=2019-01-01T00:00:00+08:00[Asia/Shanghai]
+```
+
+2.在某个时间之前的请求都进行转发
+
+```yaml
+- Before=2019-01-01T00:00:00+08:00[Asia/Shanghai]
+```
+
+3.在某个时间段的请求都进行转发
+
+```yaml
+- Between=2019-01-01T00:00:00+08:00[Asia/Shanghai], 2019-07-01T00:00:00+08:00[Asia/Shanghai]
+```
+
+4.Cookie匹配：Cookie Route Predicate
+
+```yaml
+- Cookie=sessionId, test
+```
+
+测试：`curl http://localhost:8080 --cookie "sessionId=test"`  
+
+5.请求头匹配：Header Route Predicate：
+
+```yaml
+- Header=X-Request-Id, \d+
+```
+
+测试：`curl http://localhost:8080  -H "X-Request-Id:88"`  
+
+6.Host匹配：Host Route Predicate
+
+```yaml
+- Host=**.baidu.com
+```
+
+测试：` curl http://localhost:8080  -H "Host: www.baidu.com" `  
+
+7.请求方式匹配：
+
+```yaml
+- Method=GET
+```
+
+测试：` curl -X GET http://localhost:8080 `
+
+8.请求路径匹配：Path Route Predicate 
+
+```
+- Path=/hello
+```
+
+测试：` curl http://localhost:8080/hello `  
+
+9.请求参数匹配：
+
+```
+- Query=name
+```
+
+测试：` curl localhost:8080?name=tom&id=2 `   
+
+10.请求IP地址匹配：
+
+```
+- RemoteAddr=192.168.1.1/24
+```
+
+测试：` curl localhost:8080 `  
+

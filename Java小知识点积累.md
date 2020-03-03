@@ -16,6 +16,10 @@ DataTimeFormat：前台到后台的时间格式
 
 找到`..\apache-tomcat-8.5.51\conf\logging.properties`文件修改`java.util.logging.ConsoleHandler.encoding = UTF-8`为`GBK`。
 
+**Maven：Could not find artifact ？**
+
+maven多模块项目构建时，先将parent项目要先install一回，之后子项目才可以运行mvn compile命令,否则就会报如上异常。 
+
 **jar包与war包区别？**
 
 JAR（ Java Archive ）Java归档文件，对类进行打包，引入项目可直接使用jar中的类。
