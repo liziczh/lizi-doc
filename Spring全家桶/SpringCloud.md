@@ -1,4 +1,4 @@
-# SpringCloud
+# SpringCloud-Example
 
 SpringCloud 是一系列框架的有序集合。
 
@@ -750,4 +750,94 @@ spring:
 ```
 
 测试：` curl localhost:8080 `  
+
+## Consul 注册中心
+
+下载consul服务端，并使用命令行启动，访问 http://localhost:8500 ：
+
+```
+consul agent -dev
+```
+
+Consul Producer
+
+引入Maven依赖：
+
+```xml
+<dependencies>
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-consul-discovery</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.junit.vintage</groupId>
+					<artifactId>junit-vintage-engine</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>Hoxton.SR1</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+```
+
+配置文件：`application.yml`  
+
+```yaml
+server:
+  port: 8501
+spring:
+  application:
+    name: consul-producer
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        register: true
+        hostname: localhost
+        service-name: consul-producer
+        health-check-path: /actuator/health
+        health-check-interval: 15s
+```
+
+SpringBootApplication：启用服务发现
+
+```java
+@SpringBootApplication
+@EnableDiscoveryClient
+public class ConsulProducerApplication {
+	public static void main(String[] args) {
+		SpringApplication.run(ConsulProducerApplication.class, args);
+	}
+}
+```
+
+
+
+
 
