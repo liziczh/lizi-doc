@@ -47,3 +47,17 @@ WAR包是web应用程序，直接将war包放入Tomcat的webapps目录下，启�
 
 5.服务端查询redis是否已存在该sign，若已存在，则拒绝请求；若不存在，则缓存sign一段时间。
 
+**包装类 valueOf() 与 parseLong()的区别：**
+
+parseLong(String s)：转为基本数据类型 int、long等
+
+valueOf(String s)：转为基本类型的包装类，由parseLong()包装而来，结果是Integer、Long等包装类。
+
+
+
+java8接口可以写默认方法。
+
+bigDecimal会丢失精度嘛?
+
+
+
