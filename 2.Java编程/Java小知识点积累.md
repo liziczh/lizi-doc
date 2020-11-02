@@ -53,6 +53,10 @@ parseLong(String s)：转为基本数据类型 int、long等
 
 valueOf(String s)：转为基本类型的包装类，由parseLong()包装而来，结果是Integer、Long等包装类。
 
+**update重建索引问题**：
+
+MySQL update 更新 重建索引导致数据库变慢。
+
 
 
 java8接口可以写默认方法。
