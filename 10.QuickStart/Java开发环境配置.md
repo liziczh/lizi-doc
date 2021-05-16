@@ -238,18 +238,17 @@ Maven配置本地库和阿里云私服：`.../maven/conf/settings.xml` ‘
 ##### 安装
 
 - Browser：Chrome。
-- Base：JDK、JRE、nodejs。
+- Base：jdk、jre、nodejs。
 - Env：maven。
-- IDE：IDEA、DataGrip。
-- Editor：VSCode、Typora。
-- Database：Navicat。
+- IDE：IDEA、DataGrip、Navicat。
+- Editor：VSCode、typora。
 - Tools：7-Zip、Git、Xshell、Postman、RedisDesktopManager。
-- Setting：maven_setting.xml、bookmarks.html。
+- setting：maven_setting.xml、bookmarks.html。
 
 ##### 配置
 
-- 配置环境变量：JDK、Maven。
-- maven_setting.xml。
+- 配置环境变量：jdk、maven。
+- Maven配置：maven_setting.xml。
 - 破解：JetBrain、Navicat、Xshell。
 - idea配置：插件、代码格式。
 - Chrome：导入书签bookmarks.html。

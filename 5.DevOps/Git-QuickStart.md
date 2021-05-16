@@ -81,7 +81,6 @@ $ git clone -b <branch-name> <url>
 > - ssh协议：`user@server:/path.git`
 > - https协议： `http(s)://` 
 > - git协议： `git://` 
->
 
 ## 3. Git 版本控制
 
@@ -161,7 +160,6 @@ $ git reset --hard HEAD^
 > - `HEAD^` 上一版本，`HEAD^^` 上上个版本 ...... 
 > - `HEAD~n`：上n个版本
 > - `<commit_id>`：某个指定版本
->
 
 ## 4. Git 远程仓库
 
@@ -278,5 +276,4 @@ Fork即派生项目。在GitHub社区中可以Fork任意开源仓库。Fork之�
 
 
 > 参考资料：[GitBook](https://git-scm.com/book/zh/v2/%E8%B5%B7%E6%AD%A5-%E5%85%B3%E4%BA%8E%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6)；
->
 

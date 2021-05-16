@@ -2,45 +2,48 @@
 
 
 
-##### 1.计算机基础
+##### 1.计算机基础🌟
 
-- 数据结构
-- 计算机组成原理
-- 计算机网络
-- 操作系统
-- 数据库原理
+- 数据结构：线性表/栈/队列/树/图/查找/排序。
+- 计算机组成原理：CPU/寄存器/内存/磁盘。
+- 操作系统：
+- 计算机网络：
 
-##### 2.Java
+##### 2.Java🌟
 
-- Java基础：OOP、《Java编程思想》。
-- JavaWeb：Servlet/Filter/Listener/ajax/CookieSession。
-- Java并发编程：多线程、锁《Java并发编程》
-- Spring5：设计模式、IOC&AOP等，《Spring5源码设计》
-- SpringMVC：MVC思想
-- Mybatis：DAO。
-- SpringBoot：starter。
-- MySQL：索引、优化、分库分表。
+- Java基础：语法/常用类/OOP/异常/集合/IO/反射/新特性，《Java编程思想》。
+- JavaWeb：Servlet/Filter/Listener/Interceptor/CookieSession/Ajax/JDBC/Tomcat/Http。
+- Java并发编程：多线程/线程池/线程通信/线程同步/锁/ThreadLocal/sychronized/ReentrantLock/CAS/AQS，《Java并发编程》
+- JVM：《深入理解Java虚拟机》
+- Spring：设计模式/Bean/IOC/AOP，《Spring5》
+- SpringMVC：MVC。
+- Mybatis：一级缓存二级缓存。
+- SpringBoot：starter，《SpringBoot》
 - Redis：缓存、分布式锁。
-- MQ：Kafka、RocketMQ，rabbitmq。
-- 分布式：分布式锁、分布式事务。
-- SpringCloud：Eureka/Config/Fegin/Ribbon/Hystrix/Gateway等
+- MQ：Kafka、RocketMQ。
 - Zookeeper：
+- 分布式：分布式锁/分布式事务。
+- SpringCloud：Eureka/Config/Fegin/Ribbon/Hystrix/Gateway等，《SpringCloud》
 - Dubbo：RPC
-- DDD
+- DDD：domain/applicaiton/infrastructure，《领域驱动设计》
 
-##### 3.Web
+##### 3.数据库🌟
+
+- SQL：基础语法/事务
+- MySQL：存储引擎/索引/事务/锁/SQL优化/分库分表，《MySQL》
+
+##### 4.Web
 
 - HTML+CSS+JavaScript
 - VUE
-- Angular
 
-##### 4.DevOps
+##### 5.DevOps🌟
 
 - Git
 - Linux
 - shell
 - python
 
-##### 5.大数据
+##### 6.大数据
 
-- Hadoop
+- Hadoop全家桶
