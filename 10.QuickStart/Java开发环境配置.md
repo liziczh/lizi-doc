@@ -116,16 +116,14 @@ source /etc/profile
 mvn -v
 ```
 
-Maven配置本地库和阿里云私服：`.../maven/conf/settings.xml` 
+Maven配置阿里云私服：`.../maven/conf/settings.xml` 
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <settings xmlns="http://maven.apache.org/SETTINGS/1.2.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 http://maven.apache.org/xsd/settings-1.2.0.xsd">
-  <!-- 本地仓库 -->
-  <localRepository>/Users/chenzhehao/Env/m2/repository</localRepository>
-  <!-- 私服 -->
+  <!-- 阿里云私服 -->
   <mirrors>
     <mirror>  
       <id>alimaven</id>  
@@ -243,7 +241,8 @@ Maven配置本地库和阿里云私服：`.../maven/conf/settings.xml` ‘
 - IDE：IDEA、DataGrip、Navicat。
 - Editor：VSCode、typora。
 - Tools：7-Zip、Git、Xshell、Postman、RedisDesktopManager。
-- setting：maven_setting.xml、bookmarks.html。
+- Other：shadowsocks，
+- setting：maven_setting.xml。
 
 ##### 配置
 
@@ -251,5 +250,5 @@ Maven配置本地库和阿里云私服：`.../maven/conf/settings.xml` ‘
 - Maven配置：maven_setting.xml。
 - 破解：JetBrain、Navicat、Xshell。
 - idea配置：插件、代码格式。
-- Chrome：导入书签bookmarks.html。
+- chrome同步书签。
 
