@@ -1,13 +1,96 @@
 ### Java开发环境配置
 
-#### Linux For Java
+#### Windows
+
+##### 安装备忘录
+
+- Browser：Chrome。
+- Base：jdk、jre、nodejs。
+- Env：maven。
+- Editor：VSCode、typora。
+- IDE：IDEA、DataGrip、Navicat。
+- Tools：7-Zip、Git、Xshell、Postman、RedisDesktopManager。
+- Other：shadowsocks。
+
+##### 配置备忘录
+
+- 环境变量配置：jdk、maven。
+- Maven配置：setting-aliyun.xml。
+- chrome同步书签。
+- 破解：JetBrain、Navicat、Xshell。
+- idea配置：插件、代码格式。
+
+
+
+#### Java For MacOS
+
+#####  homebrew安装
+
+```shell
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+##### Git安装与配置
+
+Git安装：
+
+```shell
+brew install git
+```
+
+Git配置：
+
+>  参考下文Linux Git配置。
+
+##### Java配置
+
+Java环境变量配置
+
+```shell
+# 配置环境变量（参照下文Set Java Environment内容）
+vi ~/.bash_profile
+# Set Java Environment
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_202.jdk/Contents/Home
+export PATH=$JAVA_HOME/bin:$PATH:.
+export CLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/dt.jar:.
+# 查看java版本
+java -version
+```
+
+Java卸载：
+
+```shell
+sudo rm -fr /Library/Internet\ Plug-Ins/JavaAppletPlugin.plugin
+sudo rm -fr /Library/PreferencesPanes/JavaControlPanel.prefPane
+sudo rm -fr ~/Library/Application\ Support/Oracle/Java
+```
+
+##### Maven配置
+
+Maven环境变量配置
+
+```shell
+# 配置环境变量（参照下文Set Maven Environment内容）
+vi ~/.bash_profile
+# Set Maven Environment
+export MAVEN_HOME=/Users/chenzhehao/Env/apache-maven-3.8.1
+export PATH=$MAVEN_HOME/bin:$PATH
+# 查看maven版本
+mvn -v
+```
+
+Maven配置阿里云镜像：`.../apache-maven/conf/settings.xml` 
+
+> 参考下文Linux Maven配置
+
+
+
+####  Java For Linux
 
 ##### Mac终端访问开发机
 
 ```shell 
-# 登录relay跳板机（邮箱密码+如流认证）
-ssh chenzhehao@relay.baidu-int.com
-# 在relay登录开发机器（输入root密码）
+# 登录开发机（输入root密码）
 ssh root@chenzhehao.bcc-bdbl.baidu.com
 # 进入环境目录
 cd /home/work/search
@@ -64,15 +147,13 @@ browseable = yes
 open smb://chenzhehao.bcc-bdbl.baidu.com
 ```
 
-##### Linux JDK安装与配置
+##### JDK安装与配置
 
 JDK安装：
 
 ```shell
-# 新建目录
-mkdir -p /home/work/search
 # 解压安装JDK到指定文件夹
-tar -zxvf jdk-8u291-linux-x64.tar.gz -C /home/work/search
+tar -zxvf jdk-8u202-linux-x64.tar.gz -C /home/work/search/env/
 ```
 
 Java环境变量配置：
@@ -81,25 +162,22 @@ Java环境变量配置：
 # 配置环境变量（参照下文Set Java Environment内容）
 vi /etc/profile
 # Set Java Environment
-export JAVA_HOME=/home/work/search/jdk1.8.0_291
-export JRE_HOME=$JAVA_HOME/jre
-export PATH=$JAVA_HOME/bin:$JRE_HOME/bin:$PATH
-export CLASSPATH=$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar:.
+export JAVA_HOME=/home/work/search/env/jdk1.8.0_202
+export PATH=$JAVA_HOME/bin:$JAVA_HOME/jre/bin:$PATH
+export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
 # 配置生效
 source /etc/profile
 # 查看Java版本
 java -version
 ```
 
-##### Linux Maven安装与配置
+##### Maven安装与配置
 
 Maven安装：
 
 ```shell
-# 新建目录
-mkdir -p /home/work/search
 # 解压安装maven到指定文件夹
-tar -zxvf apache-maven-3.8.1-bin.tar.gz -C /home/work/search
+tar -zxvf apache-maven-3.8.1-bin.tar.gz -C /home/work/search/env/
 ```
 
 Maven环境变量配置：
@@ -108,7 +186,7 @@ Maven环境变量配置：
 # 配置环境变量（参照下文Set Maven Environment内容）
 vi /etc/profile
 # Set Maven Environment
-export MAVEN_HOME=/home/work/search/apache-maven-3.8.1
+export MAVEN_HOME=/home/work/search/env/apache-maven-3.8.1
 export PATH=$MAVEN_HOME/bin:$PATH
 # 配置生效
 source /etc/profile
@@ -116,43 +194,42 @@ source /etc/profile
 mvn -v
 ```
 
-Maven配置阿里云私服：`.../maven/conf/settings.xml` 
+Maven配置阿里云镜像：`.../apache-maven/conf/settings.xml` 
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <settings xmlns="http://maven.apache.org/SETTINGS/1.2.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 http://maven.apache.org/xsd/settings-1.2.0.xsd">
-  <!-- 阿里云私服 -->
   <mirrors>
-    <mirror>  
-      <id>alimaven</id>  
-      <name>aliyun maven</name>  
+    <mirror>
+      <id>alimaven</id>
+      <name>aliyun maven</name>
       <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
-      <mirrorOf>central</mirrorOf>          
+      <mirrorOf>central</mirrorOf>
     </mirror>
   </mirrors>
 </settings>
 ```
 
-##### Linux Git安装与配置
+##### Git安装与配置
 
 Git安装：
 
 ```shell
-# 新建目录
-mkdir -p /home/work/search
-# 解压安装JDK到指定文件夹
-tar -zxvf jdk-8u291-linux-x64.tar.gz -C /home/work/search
+# yum安装git
+yum install git
+# 查看git版本
+git --version
 ```
 
 Git用户配置：
 
 ```shell
 # git用户名
-git config --global user.name chenzhehao
+git config --global user.name liziczh
 # git用户邮箱
-git config --global user.email chenzhehao@baidu.com
+git config --global user.email liziczh@foxmail.com
 ```
 
 SSH密钥配置：生成密钥，复制密钥到git远程代码管理平台上
@@ -165,90 +242,4 @@ cat ~/.ssh/id_rsa.pub | clip    # Windows
 cat ~/.ssh/id_rsa.pub | pbcopy  # MacOS
 cat ~/.ssh/id_rsa.pub # Linux手动复制下
 ```
-
-
-
-#### MacOS For Java
-
-#####  homebrew安装
-
-```shell
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
-
-##### Mac Git安装与配置
-
-Git安装：
-
-```shell
-brew install git
-```
-
-Git配置：
-
->  参考上文Linux Git配置。
-
-##### Mac Java配置
-
-Java环境变量配置
-
-```shell
-# 配置环境变量（参照下文Set Maven Environment内容）
-vi ~/.bash_profile
-# Set Java Environment
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_291.jdk/Contents/Home
-export PATH=$JAVA_HOME/bin:$PATH:.
-export CLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/dt.jar:.
-# 查看java版本
-java -version
-```
-
-Java卸载：
-
-```shell
-sudo rm -fr /Library/Internet\ Plug-Ins/JavaAppletPlugin.plugin
-sudo rm -fr /Library/PreferencesPanes/JavaControlPanel.prefPane
-sudo rm -fr ~/Library/Application\ Support/Oracle/Java
-```
-
-##### Mac Maven配置
-
-Maven环境变量配置
-
-```shell
-# 配置环境变量（参照下文Set Maven Environment内容）
-vi ~/.bash_profile
-# Set Maven Environment
-export MAVEN_HOME=/Users/chenzhehao/Env/apache-maven-3.8.1
-export PATH=$MAVEN_HOME/bin:$PATH
-# 查看maven版本
-mvn -v
-```
-
-Maven配置本地库和阿里云私服：`.../maven/conf/settings.xml` ‘
-
-> 参考上文Linux Maven配置
-
-
-
-#### Windows
-
-##### 安装
-
-- Browser：Chrome。
-- Base：jdk、jre、nodejs。
-- Env：maven。
-- IDE：IDEA、DataGrip、Navicat。
-- Editor：VSCode、typora。
-- Tools：7-Zip、Git、Xshell、Postman、RedisDesktopManager。
-- Other：shadowsocks，
-- setting：maven_setting.xml。
-
-##### 配置
-
-- 配置环境变量：jdk、maven。
-- Maven配置：maven_setting.xml。
-- 破解：JetBrain、Navicat、Xshell。
-- idea配置：插件、代码格式。
-- chrome同步书签。
 
