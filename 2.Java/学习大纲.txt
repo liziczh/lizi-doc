@@ -1,15 +1,15 @@
-�ɣ�
-JavaSE��Web����֪ʶ�����¹����ܽᡣ
-������������¹����ܽ᣺���ݽṹ�����ԭ��������ϵͳ��
+旧：
+JavaSE、Web基础知识点重新归纳总结。
+计算机基础重新归纳总结：数据结构、组成原理、操作系统、
 
-�£�
-Java8Streamϵͳѧϰ��
-kafka��
-SQL�Ż���
+新：
+Java8Stream系统学习。
+kafka。
+SQL优化。
 
-ϵͳѧϰ��
-Spring��
-Springboot��
-SpringCloud��
-VUE��
-python��
+系统学习：
+Spring书
+Springboot书
+SpringCloud书
+VUE。
+python。
